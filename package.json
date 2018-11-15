@@ -1,0 +1,19 @@
+{
+  "name": "android-device-farm",
+  "version": "1.0.0",
+  "description": "Android device farm",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andcoe/android-device-farm.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/andcoe/android-device-farm/issues"
+  },
+  "homepage": "https://github.com/andcoe/android-device-farm#readme"
+}
