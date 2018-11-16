@@ -12,3 +12,5 @@ ssh pi@<ip>
 
 ## install adb:
 sudo apt-get install -y android-tools-adb android-tools-fastboot
+
+ssh -f pi@<ip> -L 6555:localhost:6555 -N
