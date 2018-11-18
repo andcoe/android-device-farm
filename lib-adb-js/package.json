@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "adbkit": "^2.11.0",
+    "child-process-promise": "^2.2.1",
     "node-adb": "^0.1.6"
   }
 }
