@@ -37,8 +37,8 @@ class AdbWatchDog {
             })
             .catch(error => console.error('AdbWatchDog error:', error))
             .then(() => {
-                console.log('AdbWatchDog sucess: scheduling another scan in ' + WATCH_RETRY + 'ms');
-                // setTimeout(() => this.watchForNewDevices(), WATCH_RETRY)
+                console.log('AdbWatchDog: scheduling another scan in ' + WATCH_RETRY + 'ms');
+                setTimeout(() => this.watchForNewDevices(), WATCH_RETRY)
             });
     }
 
