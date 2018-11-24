@@ -1,15 +1,16 @@
-var http = require('http');
-var url  = require('url');
+const http = require('http');
+const AdbWatchDog = require('./adb-watchdog');
 
-var port = 6555;
+const adbWatchDog = new AdbWatchDog();
+adbWatchDog.start();
 
-http.createServer(function (request, response) {
-    response.writeHead(200, {"Content-Type": "text/plain"});
-    response.end("" + port);
-    if (port === 6556) port = 6555;
-    else port++;
+http.createServer((req, res) => {
+    if (req.url === '/') {
+        res.writeHead(200, {"Content-Type": "application/json"});
+        res.end(JSON.stringify(adbWatchDog.preparedDevices));
+    }
+    else {
+        res.end();
+    }
   })
   .listen(8000);
-
-// Put a friendly message on the terminal
-console.log("Server running at http://127.0.0.1:8000/");
