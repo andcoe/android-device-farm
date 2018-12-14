@@ -71,11 +71,7 @@ class Adb {
             .then(result => result.replace(/\sdevice/g, '\n').split('\n'))
             .then(result => result.filter(id => !!id))
             .then(result => result.filter(id => !id.startsWith(LOCAL_IP)))
-            .then(result => Promise.all(result.map(id => {
-                return this.deviceModelFor(id)
-                    .then(model => this.deviceManufacturerFor(id)
-                        .then(manufacturer => new Device(id, manufacturer, model)))
-            })));
+            .then(result => Promise.all(result.map(id => new Device(id))));
     }
 
     /** @returns {Promise<String>} */

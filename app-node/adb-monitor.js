@@ -40,7 +40,7 @@ class AdbMonitor {
 
                 return Promise.all(newDevices.map(device =>
                     //only add to prepared if setup is ok!
-                    this.setupDevice(device.id, 250)
+                    this.setupDevice(device, 250)
                         .then(() => this.preparedDevices.push(device))))
             })
             .catch(error => console.error('AdbMonitor => error:', error))
@@ -51,13 +51,19 @@ class AdbMonitor {
     }
 
     /** @returns {Promise} */
-    setupDevice(deviceId, timeout) {
-        console.log('AdbMonitor => setupDevice:', deviceId);
+    setupDevice(device, timeout) {
+        console.log('AdbMonitor => setupDevice:', device.id);
         let localPort = localPortCounter++;
-        return Adb.tcpIpFor(deviceId, timeout)
-            .then(() => Adb.forwardFor(deviceId, localPort, DEVICE_PORT))
-            .then(() => Adb.forwardList(deviceId))
-            .then(() => Adb.connect(deviceId, localPort))
+        return Adb.tcpIpFor(device.id, timeout)
+            .then(() => Adb.forwardFor(device.id, localPort, DEVICE_PORT))
+            .then(() => Adb.forwardList(device.id))
+            .then(() => Adb.connect(device.id, localPort))
+            .then(() => Adb.deviceModelFor(device.id)
+                .then(model => Adb.deviceManufacturerFor(device.id)
+                    .then(manufacturer => {
+                        device.setManufacturer(manufacturer);
+                        device.setModel(model);
+                    })));
     }
 
     logDevices(devices) {
