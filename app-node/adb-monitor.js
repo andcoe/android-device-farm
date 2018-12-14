@@ -56,7 +56,7 @@ class AdbMonitor {
         let localPort = localPortCounter++;
         return Adb.tcpIpFor(device.id, timeout)
             .then(() => Adb.forwardFor(device.id, localPort, DEVICE_PORT))
-            .then(() => Adb.forwardList(device.id))
+            // .then(() => Adb.forwardList(device.id))
             .then(() => Adb.connect(device.id, localPort))
             .then(() => Adb.deviceModelFor(device.id)
                 .then(model => Adb.deviceManufacturerFor(device.id)
