@@ -3,8 +3,6 @@ const _ = require('lodash');
 const Device = require('./device.js');
 
 const LOCAL_IP = '127.0.0.1';
-const DEVICE_PORT = 5555;
-let localPortCounter = 7777;
 
 class Adb {
 
@@ -117,15 +115,6 @@ class Adb {
                 if (!result.startsWith('connected to')) throw Error(`unable to connect to: ${LOCAL_IP}:${port}`);
             })
             .then(() => this.waitForDevice(deviceId))
-    }
-
-    /** @returns {Promise} */
-    static setupDevice(deviceId, timeout) {
-        let localPort = localPortCounter++;
-        return this.tcpIpFor(deviceId, timeout)
-            .then(() => this.forwardFor(deviceId, localPort, DEVICE_PORT))
-            .then(() => this.forwardList(deviceId))
-            .then(() => this.connect(deviceId, localPort))
     }
 }
 

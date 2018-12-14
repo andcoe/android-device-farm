@@ -1,15 +1,16 @@
 const http = require('http');
-const AdbWatchDog = require('./adb-watchdog');
+const AdbMonitor = require('./adb-monitor');
 
-const adbWatchDog = new AdbWatchDog();
-adbWatchDog.start();
+const adbMonitor = new AdbMonitor();
+adbMonitor.start();
 
 http.createServer((req, res) => {
-    if (req.url === '/') {
+    if (req.url === '/devices') {
         res.writeHead(200, {"Content-Type": "application/json"});
-        res.end(JSON.stringify(adbWatchDog.preparedDevices));
+        res.end(JSON.stringify(adbMonitor.preparedDevices));
     }
     else {
+        res.writeHead(404);
         res.end();
     }
   })
