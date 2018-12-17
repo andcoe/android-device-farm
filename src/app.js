@@ -1,14 +1,21 @@
 const http = require('http');
 const AdbMonitor = require('./core/adb-monitor');
 const LeaseDao = require('./persistence/lease.dao');
-const DeviceFarmService = require('./device-farm.service');
+const DeviceDao = require('./persistence/device.dao');
+const DeviceService = require('./service/device.service');
 const NoDevicesAvailable = require('./model/exception/no-devices-available.exception');
 const LeaseNotFound = require('./model/exception/lease-not-found.exception');
+const LeaseService = require('./service/lease.service');
 
-const adbMonitor = new AdbMonitor();
 const leaseDao = new LeaseDao();
-const service = new DeviceFarmService(adbMonitor, leaseDao);
-service.start();
+const deviceDao = new DeviceDao();
+
+const adbMonitor = new AdbMonitor(deviceDao);
+adbMonitor.start();
+
+const service = new DeviceService(deviceDao, leaseDao);
+
+const leaseService = new LeaseService(leaseDao, deviceDao);
 
 const deleteLeaseIdRegex = new RegExp(("^\/leases\/([^\/]+?)$"));
 
@@ -20,18 +27,18 @@ http.createServer((req, res) => {
             res.end(devices);
         }
         else if (req.method === 'GET' && req.url === '/leases') {
-            const leases = JSON.stringify(service.allLeases());
+            const leases = JSON.stringify(leaseService.allLeases());
             res.writeHead(200, {"Content-Type": "application/json"});
             res.end(leases);
         }
         else if (req.method === 'POST' && req.url === '/leases') {
-            const lease = JSON.stringify(service.leaseAny());
+            const lease = JSON.stringify(leaseService.leaseAny());
             res.writeHead(201, {"Content-Type": "application/json"});
             res.end(lease);
         }
         else if (req.method === 'DELETE' && deleteLeaseIdRegex.test(req.url)) {
             const leaseId = deleteLeaseIdRegex.exec(req.url)[1];
-            service.release(leaseId);
+            leaseService.release(leaseId);
             res.writeHead(204, {"Content-Type": "application/json"});
             res.end();
         }

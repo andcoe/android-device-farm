@@ -1,6 +1,16 @@
 class DeviceDao {
-    constructor() {
 
+    constructor() {
+        this.devices = [];
+    }
+
+    allDevices() {
+        return this.devices;
+    }
+
+    create(device) {
+        this.devices.push(device);
+        return device;
     }
 }
 

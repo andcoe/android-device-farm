@@ -7,8 +7,8 @@ let localPortCounter = 7777;
 
 class AdbMonitor {
 
-    constructor() {
-        this.preparedDevices = [];
+    constructor(deviceDao) {
+        this.deviceDao = deviceDao;
     }
 
     start() {
@@ -26,22 +26,26 @@ class AdbMonitor {
                 console.log('AdbMonitor => all connected devices:');
                 this.logDevices(devices);
 
-                const newDevices = _.differenceBy(devices, this.preparedDevices, device => device.id);
+                const preparedDevices = this.deviceDao.allDevices();
+
+                const newDevices = _.differenceBy(devices, preparedDevices, device => device.id);
                 console.log("AdbMonitor => connected now:");
                 this.logDevices(newDevices);
 
-                const removedDevices = _.differenceBy(this.preparedDevices, devices, device => device.id);
+                const removedDevices = _.differenceBy(preparedDevices, devices, device => device.id);
                 console.log("AdbMonitor => removed now:");
                 this.logDevices(removedDevices);
 
-                this.preparedDevices = _.differenceBy(this.preparedDevices, removedDevices, device => device.id);
+                const newPreparedDevices = _.differenceBy(preparedDevices, removedDevices, device => device.id);
                 console.log("AdbMonitor => preparedDevices: ");
-                this.logDevices(this.preparedDevices);
+                this.logDevices(newPreparedDevices);
+
+                this.deviceDao.devices = newPreparedDevices; //TODO: remove the mutation
 
                 return Promise.all(newDevices.map(device =>
                     //only add to prepared if setup is ok!
                     this.setupDevice(device, 250)
-                        .then(() => this.preparedDevices.push(device))))
+                        .then(() => this.deviceDao.create(device))))
             })
             .catch(error => console.error('AdbMonitor => error:', error))
             .then(() => {
