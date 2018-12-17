@@ -1,4 +1,3 @@
-const moment = require("moment");
 const _ = require('lodash');
 const Adb = require('./adb.js');
 
@@ -72,21 +71,11 @@ class AdbMonitor {
             console.log("[");
             devices.forEach(d => console.log('  ' + JSON.stringify(d)));
             console.log(']');
-        }
-        else {
+        } else {
             console.log("[]");
         }
     }
 
-    lease() {
-        const device = this.preparedDevices.find(d => !d.inUse);
-        if (device) {
-            device.inUse = true;
-            device.inUseUntil = moment().add(10, 'minutes').format();
-            return device;
-        }
-        return {};
-    }
 }
 
 module.exports = AdbMonitor;
