@@ -1,6 +1,6 @@
 const child_process = require('child_process');
 const _ = require('lodash');
-const Device = require('./device.js');
+const Device = require('../model/device.js');
 
 const LOCAL_IP = '127.0.0.1';
 

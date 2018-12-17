@@ -2,9 +2,10 @@
   "name": "android-device-farm",
   "version": "1.0.0",
   "description": "Android device farm",
-  "main": "app.js",
+  "main": "src/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/jasmine-node --color --verbose test",
+    "test:watch": "./node_modules/.bin/jasmine-node --color --verbose --autotest test"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,10 @@
   },
   "homepage": "https://github.com/andcoe/android-device-farm#readme",
   "dependencies": {
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "moment": "^2.23.0"
+  },
+  "devDependencies": {
+    "jasmine-node": "^1.16.2"
   }
 }
