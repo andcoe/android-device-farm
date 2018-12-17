@@ -1,8 +1,13 @@
 const http = require('http');
 const AdbMonitor = require('./core/adb-monitor');
-const {DeviceFarmService, NoDevicesAvailable, LeaseNotFound} = require('./device-farm-service');
+const LeaseDao = require('./persistence/lease.dao');
+const DeviceFarmService = require('./device-farm.service');
+const NoDevicesAvailable = require('./model/exception/no-devices-available.exception');
+const LeaseNotFound = require('./model/exception/lease-not-found.exception');
 
-const service = new DeviceFarmService(new AdbMonitor());
+const adbMonitor = new AdbMonitor();
+const leaseDao = new LeaseDao();
+const service = new DeviceFarmService(adbMonitor, leaseDao);
 service.start();
 
 const deleteLeaseIdRegex = new RegExp(("^\/leases\/([^\/]+?)$"));
