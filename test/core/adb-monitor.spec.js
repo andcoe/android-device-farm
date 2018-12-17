@@ -20,13 +20,13 @@ describe('AdbMonitor', () => {
             adbMonitor.preparedDevices.push(device2);
 
             const startTime = moment();
-            const borrowResponse = adbMonitor.lease();
+            const leaseResponse = adbMonitor.lease();
 
-            expect(borrowResponse.id).toEqual('456');
-            expect(borrowResponse.inUse).toBe(true);
-            expect(borrowResponse.inUseUntil).toBeDefined();
+            expect(leaseResponse.id).toEqual('456');
+            expect(leaseResponse.inUse).toBe(true);
+            expect(leaseResponse.inUseUntil).toBeDefined();
 
-            const end = moment(borrowResponse.inUseUntil);
+            const end = moment(leaseResponse.inUseUntil);
 
             const seconds = moment.duration(end.diff(startTime)).asSeconds();
             expect(seconds).toBeGreaterThan(1);
