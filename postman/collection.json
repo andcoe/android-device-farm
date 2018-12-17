@@ -1,0 +1,66 @@
+{
+	"variables": [],
+	"info": {
+		"name": "android-device-farm",
+		"_postman_id": "82d02cd5-befc-8808-edd5-115bd1a947b6",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "devices",
+			"request": {
+				"url": "localhost:8000/devices",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "leases",
+			"request": {
+				"url": "localhost:8000/leases",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "leases (any)",
+			"request": {
+				"url": "localhost:8000/leases",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "lease device",
+			"request": {
+				"url": "localhost:8000/lease/123",
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "release",
+			"request": {
+				"url": "localhost:8000/leases/123",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
