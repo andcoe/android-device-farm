@@ -4,6 +4,7 @@ class Device {
         this.id = id;
         this.manufacturer = null;
         this.model = null;
+        this.port = null;
     }
 
     setManufacturer(manufacturer) {
@@ -12,6 +13,10 @@ class Device {
 
     setModel(model) {
         this.model = model;
+    }
+
+    setPort(port) {
+        this.port = port;
     }
 }
 

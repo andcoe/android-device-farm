@@ -63,6 +63,7 @@ class AdbMonitor {
                     .then(manufacturer => {
                         device.setManufacturer(manufacturer);
                         device.setModel(model);
+                        device.setPort(localPort);
                     })));
     }
 

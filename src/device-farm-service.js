@@ -39,7 +39,7 @@ class DeviceFarmService {
             .find(device => _.every(this.leases, lease => lease.deviceId !== device.id));
 
         if (device) {
-            const lease = new Lease(device.id, moment().add(10, 'minutes'));
+            const lease = new Lease(device, moment().add(10, 'minutes'));
             this.leases.push(lease);
             return lease;
         }
@@ -77,9 +77,9 @@ class LeaseNotFound extends DeviceFarmError {
 }
 
 class Lease {
-    constructor(deviceId, inUseUntil) {
+    constructor(device, inUseUntil) {
         this.id = Math.floor(Math.random() * 1000000000).toString(); //TODO: improve this with unique ids
-        this.deviceId = deviceId;
+        this.device = device;
         this.inUseUntil = inUseUntil;
     }
 }
