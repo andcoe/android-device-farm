@@ -2,8 +2,8 @@ class Device {
 
     constructor(id) {
         this.id = id;
-        this.inUse = false;
-        this.inUseUntil = null;
+        this.manufacturer = null;
+        this.model = null;
     }
 
     setManufacturer(manufacturer) {

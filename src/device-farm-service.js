@@ -23,10 +23,10 @@ class DeviceFarmService {
         //no stale leases
         const lease = this.leases.find(lease => lease.deviceId === device.id);
 
+        console.log(lease);
         return {
             ...device,
-            inUse: !!lease,
-            inUseUntil: !!lease ? lease.inUseUntil : null
+            lease: !!lease ? lease : null
         };
     }
 
@@ -39,10 +39,20 @@ class DeviceFarmService {
             .find(device => _.every(this.leases, lease => lease.deviceId !== device.id));
 
         if (device) {
-            this.leases.push(new Lease(device.id, moment().add(10, 'minutes')));
-            return this.device(device.id);
+            const lease = new Lease(device.id, moment().add(10, 'minutes'));
+            this.leases.push(lease);
+            return lease;
         }
-        throw new NoDevicesAvailable()
+        throw new NoDevicesAvailable();
+    }
+
+    release(leaseId) {
+        console.log('leaseId', leaseId);
+        const removed = _.remove(this.leases, l => l.id === leaseId);
+        console.log(removed);
+        if(_.isEmpty(removed)) {
+           throw new LeaseNotFound(leaseId);
+        }
     }
 }
 
@@ -60,9 +70,15 @@ class NoDevicesAvailable extends DeviceFarmError {
     }
 }
 
-class Lease {
+class LeaseNotFound extends DeviceFarmError {
+    constructor(leaseId) {
+        super(`Lease not found with id:${leaseId}.`, 'LeaseNotFound');
+    }
+}
 
+class Lease {
     constructor(deviceId, inUseUntil) {
+        this.id = Math.floor(Math.random() * 1000000000).toString(); //TODO: improve this with unique ids
         this.deviceId = deviceId;
         this.inUseUntil = inUseUntil;
     }
@@ -70,5 +86,6 @@ class Lease {
 
 module.exports = {
     DeviceFarmService,
-    NoDevicesAvailable
+    NoDevicesAvailable,
+    LeaseNotFound
 };
