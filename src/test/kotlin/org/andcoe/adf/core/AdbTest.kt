@@ -54,12 +54,32 @@ class AdbTest {
     }
 
     @Test
-    fun returnsDeviceManufacturerFor() {
+    fun returnsDeviceManufacturer() {
         every { commandRunner.exec("adb -s XM043220 shell getprop ro.product.manufacturer") } returns ADB_DEVICE_MANUFACTURER.output
         val adb = Adb(commandRunner)
         val result = adb.deviceManufacturerFor("XM043220")
         assertThat(result).isEqualTo("bq")
         verify { commandRunner.exec("adb -s XM043220 shell getprop ro.product.manufacturer") }
+    }
+
+    @Test
+    fun setsTcpIpForDeviceAndWaitsForItToBecomeReady() {
+        every { commandRunner.exec("adb -s XM043220 tcpip 5555") } returns ""
+        every { commandRunner.exec("adb -s XM043220 wait-for-device") } returns ""
+        val adb = Adb(commandRunner)
+        val result = adb.tcpIpFor("XM043220")
+        assertThat(result)
+        verify { commandRunner.exec("adb -s XM043220 tcpip 5555") }
+        verify { commandRunner.exec("adb -s XM043220 wait-for-device") }
+    }
+
+    @Test
+    fun setsForwardForDevice() {
+        every { commandRunner.exec("adb -s FA79L1A04130 forward tcp:7777 tcp:5555") } returns ""
+        val adb = Adb(commandRunner)
+        val result = adb.forwardFor("FA79L1A04130", 7777, 5555)
+        assertThat(result)
+        verify { commandRunner.exec("adb -s FA79L1A04130 forward tcp:7777 tcp:5555") }
     }
 
     @Test
@@ -69,14 +89,5 @@ class AdbTest {
 
         adb.connect("PIXEL", 1234)
         verify { commandRunner.exec("adb -s PIXEL connect 127.0.0.1:1234") }
-    }
-
-    @Test
-    fun forwardFor() {
-        every { commandRunner.exec("adb -s FA79L1A04130 forward tcp:7777 tcp:5555") } returns ""
-        val adb = Adb(commandRunner)
-        val result = adb.forwardFor("FA79L1A04130", 7777, 5555)
-        assertThat(result)
-        verify { commandRunner.exec("adb -s FA79L1A04130 forward tcp:7777 tcp:5555") }
     }
 }

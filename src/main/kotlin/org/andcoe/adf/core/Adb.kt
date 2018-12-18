@@ -39,15 +39,13 @@ class Adb(private val commandRunner: CommandRunner) {
         return output.trim()
     }
 
-    //
-//    fun tcpIpFor(deviceId, timeout)
-//    {
-//        return this.exec(`adb -s ${deviceId} tcpip 5555`, { sleep: timeout })
-//            .then(() => this.waitForDevice(deviceId))
-//    }
-//
+    fun tcpIpFor(deviceId: String) {
+        commandRunner.exec("""adb -s $deviceId tcpip 5555""")
+        waitForDevice(deviceId)
+    }
+
     fun forwardFor(deviceId: String, localPort: Int, devicePort: Int) {
-        commandRunner.exec("adb -s $deviceId forward tcp:$localPort tcp:${devicePort}")
+        commandRunner.exec("adb -s $deviceId forward tcp:$localPort tcp:$devicePort")
     }
 
     fun connect(deviceId: String, port: Int) {
