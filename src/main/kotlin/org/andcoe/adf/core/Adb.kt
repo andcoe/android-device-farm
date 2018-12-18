@@ -46,20 +46,12 @@ class Adb(private val commandRunner: CommandRunner) {
 //            .then(() => this.waitForDevice(deviceId))
 //    }
 //
-    fun forwardFor(deviceId : String, localPort : Int, devicePort: Int)
-    {
-        commandRunner.exec("adb -s ${deviceId} forward tcp:${localPort} tcp:${devicePort}")
+    fun forwardFor(deviceId: String, localPort: Int, devicePort: Int) {
+        commandRunner.exec("adb -s $deviceId forward tcp:$localPort tcp:${devicePort}")
     }
-//
-//    fun forwardList(deviceId)
-//    {
-//        return this.exec(`adb -s ${deviceId} forward --list`)
-//            .then(() => this.waitForDevice(deviceId))
-//    }
-//
+
     fun connect(deviceId: String, port: Int) {
-        val output = commandRunner.exec("adb -s ${deviceId} connect ${LOCAL_IP}:${port}")
-        if (!output.startsWith("connected to")) throw Error("unable to connect to: ${LOCAL_IP}:${port}");
+        commandRunner.exec("adb -s $deviceId connect $LOCAL_IP:$port")
     }
 
 }
