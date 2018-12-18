@@ -3,19 +3,13 @@ package org.andcoe.adf.core
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-interface CommandRunner {
+
+class CommandRunner {
+
     fun exec(command: String,
              workingDir: File = File("."),
              timeoutAmount: Long = 60,
-             timeoutUnit: TimeUnit = TimeUnit.SECONDS): String
-}
-
-class AdbCommandRunner: CommandRunner {
-
-    override fun exec(command: String,
-                      workingDir: File,
-                      timeoutAmount: Long,
-                      timeoutUnit: TimeUnit): String {
+             timeoutUnit: TimeUnit = TimeUnit.SECONDS): String {
 
         val process = ProcessBuilder(*command.split("\\s".toRegex()).toTypedArray())
             .directory(workingDir)

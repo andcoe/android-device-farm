@@ -18,26 +18,22 @@ class Adb(private val commandRunner: CommandRunner) {
         commandRunner.exec("""adb -s $deviceId wait-for-device""")
     }
 
-    fun devices(): List<String> {
-        var output = commandRunner.exec("adb devices")
-        output = output.replace("List of devices attached\n", "")
-        return output.replace("device", "")
+    fun devices(): List<String> =
+        commandRunner.exec("adb devices")
+            .replace("List of devices attached\n", "")
+            .replace("device", "")
             .split("\n")
             .map { it.trim() }
             .filterNot { it.isEmpty() }
             .filterNot { it.startsWith(LOCAL_IP) }
-    }
 
-    fun deviceModelFor(deviceId: String): String {
-        val output = commandRunner.exec("""adb -s $deviceId shell getprop ro.product.model""")
-        return output.trim()
-    }
+    fun deviceModelFor(deviceId: String): String =
+        commandRunner.exec("""adb -s $deviceId shell getprop ro.product.model""").trim()
 
 
-    fun deviceManufacturerFor(deviceId: String): String {
-        val output = commandRunner.exec("""adb -s $deviceId shell getprop ro.product.manufacturer""")
-        return output.trim()
-    }
+    fun deviceManufacturerFor(deviceId: String): String =
+        commandRunner.exec("""adb -s $deviceId shell getprop ro.product.manufacturer""")
+            .trim()
 
     fun tcpIpFor(deviceId: String) {
         commandRunner.exec("""adb -s $deviceId tcpip 5555""")
