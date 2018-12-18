@@ -1,5 +1,4 @@
 const http = require('http');
-const child_process = require('child_process');
 
 const AdbMonitor = require('./core/adb-monitor');
 const LeaseDao = require('./persistence/lease.dao');
@@ -9,6 +8,12 @@ const NoDevicesAvailable = require('./model/exception/no-devices-available.excep
 const LeaseNotFound = require('./model/exception/lease-not-found.exception');
 const LeaseService = require('./service/lease.service');
 const Adb = require('./core/adb');
+
+
+
+const ENV = console.log(process.env.NODE_ENV);
+var child_process =  ENV !== "TEST" ? require('child_process') : require('./mock/child-process')
+
 
 const leaseDao = new LeaseDao();
 const deviceDao = new DeviceDao();

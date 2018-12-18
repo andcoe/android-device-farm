@@ -4,7 +4,7 @@
   "description": "Android device farm",
   "main": "src/app.js",
   "scripts": {
-    "test": "./node_modules/.bin/jasmine-node --verbose test",
+    "test": "NODE_ENV='TEST' ./node_modules/.bin/jasmine-node --verbose test",
     "test:watch": "./node_modules/.bin/jasmine-node --verbose --autoTest test"
   },
   "repository": {
