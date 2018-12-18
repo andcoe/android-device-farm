@@ -10,16 +10,14 @@ const LeaseNotFound = require('./model/exception/lease-not-found.exception');
 const LeaseService = require('./service/lease.service');
 const Adb = require('./core/adb');
 
-
 const leaseDao = new LeaseDao();
 const deviceDao = new DeviceDao();
-
-const adb = new Adb(child_process);
-const adbMonitor = new AdbMonitor(deviceDao,adb);
 
 const deviceService = new DeviceService(deviceDao, leaseDao);
 const leaseService = new LeaseService(leaseDao, deviceDao);
 
+const adb = new Adb(child_process);
+const adbMonitor = new AdbMonitor(deviceService, adb);
 adbMonitor.start();
 
 const deleteLeaseIdRegex = new RegExp(("^\/leases\/([^\/]+?)$"));

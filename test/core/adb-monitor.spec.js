@@ -24,4 +24,18 @@ describe('AdbMonitor', () => {
             expect(adbMonitor.adb).toBe(adb);
         });
     });
+    // describe('start()', () => {
+    //     const killAdbServerPromise = new Promise((resolve, reject) => resolve('foo'));
+    //     const startAdbServerPromise = new Promise((resolve, reject) => resolve('foo'));
+    //
+    //     it('kills adb', () => {
+    //         const deviceService = new DeviceService();
+    //         const adb = new Adb();
+    //         const adbMonitor = new AdbMonitor(deviceService, adb);
+    //         spyOn(adb, 'killServer').and.returnValue(killAdbServerPromise);
+    //         spyOn(adb, 'startServer').and.returnValue(startAdbServerPromise);
+    //         adbMonitor.start();
+    //         expect(adb.killServer).toHaveBeenCalled();
+    //     });
+    // });
 });
