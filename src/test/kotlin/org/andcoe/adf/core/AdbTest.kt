@@ -36,6 +36,15 @@ class AdbTest {
     }
 
     @Test
+    fun devicesHandlesNoDevices() {
+        every { commandRunner.exec("adb devices") } returns ADB_DEVICES_EMPTY.output
+        val adb = Adb(commandRunner)
+        val result = adb.devices()
+        assertThat(result).isEmpty()
+        verify { commandRunner.exec("adb devices") }
+    }
+
+    @Test
     fun returnsDeviceIds() {
         every { commandRunner.exec("adb devices") } returns ADB_DEVICES.output
         val adb = Adb(commandRunner)
@@ -86,7 +95,6 @@ class AdbTest {
     fun connectsToDevice() {
         every { commandRunner.exec("adb -s PIXEL connect 127.0.0.1:1234") } returns ADB_CONNECT_SUCCESS.output
         val adb = Adb(commandRunner)
-
         adb.connect("PIXEL", 1234)
         verify { commandRunner.exec("adb -s PIXEL connect 127.0.0.1:1234") }
     }

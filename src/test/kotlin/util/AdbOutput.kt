@@ -13,6 +13,13 @@ XM043220	device
 
 """
     ),
+    ADB_DEVICES_EMPTY(
+        """
+List of devices attached
+
+
+"""
+    ),
 
     ADB_CONNECT_SUCCESS(
         """
