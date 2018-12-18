@@ -62,3 +62,12 @@ typings/
 
 
 .idea
+.gradle
+target
+out
+**/*.iml
+**/dependency-reduced-pom.xml
+**/*.log
+.logs
+.db
+**/*.rdb
