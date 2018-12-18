@@ -4,8 +4,8 @@
   "description": "Android device farm",
   "main": "src/app.js",
   "scripts": {
-    "test": "./node_modules/.bin/jasmine-node --color --verbose test",
-    "test:watch": "./node_modules/.bin/jasmine-node --color --verbose --autotest test"
+    "test": "./node_modules/.bin/jasmine-node --verbose test",
+    "test:watch": "./node_modules/.bin/jasmine-node --verbose --autoTest test"
   },
   "repository": {
     "type": "git",

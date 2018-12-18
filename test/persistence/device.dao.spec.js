@@ -1,5 +1,8 @@
 const DeviceDao = require('../../src/persistence/device.dao');
 
-
-describe('DeviceDao', () => {;
+describe('DeviceDao', () => {
+    it('returns empty devices', () => {
+        const deviceDao = new DeviceDao();
+        expect(deviceDao.allDevices()).toEqual([]);
+    });
 });
