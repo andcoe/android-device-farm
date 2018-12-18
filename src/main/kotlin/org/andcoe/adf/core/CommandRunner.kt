@@ -1,18 +1,13 @@
 package org.andcoe.adf.core
 
-import java.io.File
 import java.util.concurrent.TimeUnit
-
 
 class CommandRunner {
 
-    fun exec(command: String,
-             workingDir: File = File("."),
-             timeoutAmount: Long = 60,
-             timeoutUnit: TimeUnit = TimeUnit.SECONDS): String {
+    fun exec(command: String, timeoutAmount: Long = 15, timeoutUnit: TimeUnit = TimeUnit.SECONDS): String {
+        println("""> $command""")
 
         val process = ProcessBuilder(*command.split("\\s".toRegex()).toTypedArray())
-            .directory(workingDir)
             .redirectOutput(ProcessBuilder.Redirect.PIPE)
             .redirectError(ProcessBuilder.Redirect.PIPE)
             .start()
@@ -26,6 +21,8 @@ class CommandRunner {
             throw RuntimeException("execution failed with code ${process.exitValue()}: $this")
         }
 
-        return process.inputStream.bufferedReader().readText()
+        val output = process.inputStream.bufferedReader().readText()
+        println("""< $output""")
+        return output
     }
 }

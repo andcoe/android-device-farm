@@ -3,9 +3,9 @@ package org.andcoe.adf.core
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import util.AdbOutput.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import util.AdbOutput.*
 
 class AdbTest {
 
@@ -13,7 +13,7 @@ class AdbTest {
 
     @Test
     fun killsServer() {
-        every { commandRunner.exec("adb kill-server") } returns ""
+        every { commandRunner.exec("adb kill-server") } returns ADB_KILL_SERVER.output
         val adb = Adb(commandRunner)
         adb.killServer()
         verify { commandRunner.exec("adb kill-server") }
@@ -29,10 +29,10 @@ class AdbTest {
 
     @Test
     fun waitsForDevice() {
-        every { commandRunner.exec("adb -s XM043220 wait-for-device") } returns ""
+        every { commandRunner.exec("adb -s PIXEL wait-for-device") } returns ADB_WAIT_FOR_DEVICE.output
         val adb = Adb(commandRunner)
-        adb.waitForDevice("XM043220")
-        verify { commandRunner.exec("adb -s XM043220 wait-for-device") }
+        adb.waitForDevice("PIXEL")
+        verify { commandRunner.exec("adb -s PIXEL wait-for-device") }
     }
 
     @Test
@@ -49,42 +49,42 @@ class AdbTest {
         every { commandRunner.exec("adb devices") } returns ADB_DEVICES.output
         val adb = Adb(commandRunner)
         val result = adb.devices()
-        assertThat(result).isEqualTo(listOf("XM043220", "3204486bc15611b5"))
+        assertThat(result).isEqualTo(listOf("PIXEL", "SAMSUNG"))
         verify { commandRunner.exec("adb devices") }
     }
 
     @Test
     fun returnsDeviceModel() {
-        every { commandRunner.exec("adb -s XM043220 shell getprop ro.product.model") } returns ADB_DEVICE_MODEL.output
+        every { commandRunner.exec("adb -s PIXEL shell getprop ro.product.model") } returns ADB_DEVICE_MODEL.output
         val adb = Adb(commandRunner)
-        val result = adb.deviceModelFor("XM043220")
+        val result = adb.deviceModelFor("PIXEL")
         assertThat(result).isEqualTo("Aquaris X5 Plus")
-        verify { commandRunner.exec("adb -s XM043220 shell getprop ro.product.model") }
+        verify { commandRunner.exec("adb -s PIXEL shell getprop ro.product.model") }
     }
 
     @Test
     fun returnsDeviceManufacturer() {
-        every { commandRunner.exec("adb -s XM043220 shell getprop ro.product.manufacturer") } returns ADB_DEVICE_MANUFACTURER.output
+        every { commandRunner.exec("adb -s PIXEL shell getprop ro.product.manufacturer") } returns ADB_DEVICE_MANUFACTURER.output
         val adb = Adb(commandRunner)
-        val result = adb.deviceManufacturerFor("XM043220")
+        val result = adb.deviceManufacturerFor("PIXEL")
         assertThat(result).isEqualTo("bq")
-        verify { commandRunner.exec("adb -s XM043220 shell getprop ro.product.manufacturer") }
+        verify { commandRunner.exec("adb -s PIXEL shell getprop ro.product.manufacturer") }
     }
 
     @Test
     fun setsTcpIpForDeviceAndWaitsForItToBecomeReady() {
-        every { commandRunner.exec("adb -s XM043220 tcpip 5555") } returns ""
-        every { commandRunner.exec("adb -s XM043220 wait-for-device") } returns ""
+        every { commandRunner.exec("adb -s PIXEL tcpip 5555") } returns ADB_TCP_IP.output
+        every { commandRunner.exec("adb -s PIXEL wait-for-device") } returns ADB_WAIT_FOR_DEVICE.output
         val adb = Adb(commandRunner)
-        val result = adb.tcpIpFor("XM043220")
+        val result = adb.tcpIpFor("PIXEL")
         assertThat(result)
-        verify { commandRunner.exec("adb -s XM043220 tcpip 5555") }
-        verify { commandRunner.exec("adb -s XM043220 wait-for-device") }
+        verify { commandRunner.exec("adb -s PIXEL tcpip 5555") }
+        verify { commandRunner.exec("adb -s PIXEL wait-for-device") }
     }
 
     @Test
     fun setsForwardForDevice() {
-        every { commandRunner.exec("adb -s FA79L1A04130 forward tcp:7777 tcp:5555") } returns ""
+        every { commandRunner.exec("adb -s FA79L1A04130 forward tcp:7777 tcp:5555") } returns ADB_FORWARD_IP.output
         val adb = Adb(commandRunner)
         val result = adb.forwardFor("FA79L1A04130", 7777, 5555)
         assertThat(result)
