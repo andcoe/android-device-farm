@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const Adb = require('./adb.js');
 
 const WATCH_RETRY = 10000;
 const DEVICE_PORT = 5555;
@@ -7,13 +6,14 @@ let localPortCounter = 7777;
 
 class AdbMonitor {
 
-    constructor(deviceDao) {
+    constructor(deviceDao, adb) {
         this.deviceDao = deviceDao;
+        this.adb = adb
     }
 
     start() {
-        Adb.killServer()
-            .then(() => Adb.startServer())
+        this.adb.killServer()
+            .then(() => this.adb.startServer())
             .then(() => this.scanDevices());
     }
 
@@ -21,7 +21,7 @@ class AdbMonitor {
         console.log('=========================================================================');
         console.log('============================== scanDevices ==============================');
         console.log('=========================================================================');
-        Adb.devices()
+        this.adb.devices()
             .then(devices => {
                 console.log('AdbMonitor => all connected devices:');
                 this.logDevices(devices);
@@ -58,12 +58,12 @@ class AdbMonitor {
     setupDevice(device, timeout) {
         console.log('AdbMonitor => setupDevice:', device.id);
         let localPort = localPortCounter++;
-        return Adb.tcpIpFor(device.id, timeout)
-            .then(() => Adb.forwardFor(device.id, localPort, DEVICE_PORT))
-            // .then(() => Adb.forwardList(device.id))
-            .then(() => Adb.connect(device.id, localPort))
-            .then(() => Adb.deviceModelFor(device.id)
-                .then(model => Adb.deviceManufacturerFor(device.id)
+        return this.adb.tcpIpFor(device.id, timeout)
+            .then(() => this.adb.forwardFor(device.id, localPort, DEVICE_PORT))
+            // .then(() => this.adb.forwardList(device.id))
+            .then(() => this.adb.connect(device.id, localPort))
+            .then(() => this.adb.deviceModelFor(device.id)
+                .then(model => this.adb.deviceManufacturerFor(device.id)
                     .then(manufacturer => {
                         device.setManufacturer(manufacturer);
                         device.setModel(model);

@@ -1,4 +1,3 @@
-const child_process = require('child_process');
 const _ = require('lodash');
 const Device = require('../model/device.js');
 
@@ -6,7 +5,11 @@ const LOCAL_IP = '127.0.0.1';
 
 class Adb {
 
-    static exec(command, options) {
+    constructor(child_process){
+        this.child_process = child_process
+    }
+
+    exec(command, options) {
         options = options || {
             timeout: options && options.timeout,
             ignoreStderr: options && options.ignoreStderr || false,
@@ -24,7 +27,7 @@ class Adb {
                 }, options.timeout);
             }
 
-            const cp = child_process.exec(command, (error, stdout, stderr) => {
+            const cp = this.child_process.exec(command, (error, stdout, stderr) => {
                 if (options.timeout) clearTimeout(timeoutId);
 
                 if (error) {
@@ -50,22 +53,22 @@ class Adb {
     }
 
     /** @returns {Promise} */
-    static killServer() {
+    killServer() {
         return this.exec('adb kill-server', {ignoreStderr: true})
     }
 
     /** @returns {Promise} */
-    static startServer() {
+    startServer() {
         return this.exec('adb start-server', {ignoreStderr: true})
     }
 
     /** @returns {Promise} */
-    static waitForDevice(deviceId) {
+    waitForDevice(deviceId) {
         return this.exec(`adb -s ${deviceId} wait-for-device`, {timeout: 15000})
     }
 
     /** @returns {Promise<Device[]>} */
-    static devices() {
+    devices() {
         return this.exec('adb devices')
             .then(result => result.replace('List of devices attached\n', ''))
             .then(result => result.replace(/\sdevice/g, '\n').split('\n'))
@@ -75,37 +78,37 @@ class Adb {
     }
 
     /** @returns {Promise<String>} */
-    static deviceModelFor(deviceId) {
+    deviceModelFor(deviceId) {
         return this.exec(`adb -s ${deviceId} shell getprop ro.product.model`)
             .then(model => model.trim())
     }
 
     /** @returns {Promise<String>} */
-    static deviceManufacturerFor(deviceId) {
+    deviceManufacturerFor(deviceId) {
         return this.exec(`adb -s ${deviceId} shell getprop ro.product.manufacturer`)
             .then(manufacturer => manufacturer.trim())
     }
 
     /** @returns {Promise} */
-    static tcpIpFor(deviceId, timeout) {
+    tcpIpFor(deviceId, timeout) {
         return this.exec(`adb -s ${deviceId} tcpip 5555`, {sleep: timeout})
             .then(() => this.waitForDevice(deviceId))
     }
 
     /** @returns {Promise} */
-    static forwardFor(deviceId, localPort, devicePort) {
+    forwardFor(deviceId, localPort, devicePort) {
         return this.exec(`adb -s ${deviceId} forward tcp:${localPort} tcp:${devicePort}`)
             .then(() => this.waitForDevice(deviceId))
     }
 
     /** @returns {Promise} */
-    static forwardList(deviceId) {
+    forwardList(deviceId) {
         return this.exec(`adb -s ${deviceId} forward --list`)
             .then(() => this.waitForDevice(deviceId))
     }
 
     /** @returns {Promise} */
-    static connect(deviceId, port) {
+    connect(deviceId, port) {
         return this.exec(`adb -s ${deviceId} connect ${LOCAL_IP}:${port}`)
             .then(result => {
                 if (!result.startsWith('connected to')) throw Error(`unable to connect to: ${LOCAL_IP}:${port}`);

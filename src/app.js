@@ -1,4 +1,6 @@
 const http = require('http');
+const child_process = require('child_process');
+
 const AdbMonitor = require('./core/adb-monitor');
 const LeaseDao = require('./persistence/lease.dao');
 const DeviceDao = require('./persistence/device.dao');
@@ -6,11 +8,15 @@ const DeviceService = require('./service/device.service');
 const NoDevicesAvailable = require('./model/exception/no-devices-available.exception');
 const LeaseNotFound = require('./model/exception/lease-not-found.exception');
 const LeaseService = require('./service/lease.service');
+const Adb = require('./core/adb');
+
 
 const leaseDao = new LeaseDao();
 const deviceDao = new DeviceDao();
 
-const adbMonitor = new AdbMonitor(deviceDao);
+const adb = new Adb(child_process);
+const adbMonitor = new AdbMonitor(deviceDao,adb);
+
 adbMonitor.start();
 
 const service = new DeviceService(deviceDao, leaseDao);
