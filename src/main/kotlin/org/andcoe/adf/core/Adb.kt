@@ -2,6 +2,9 @@ package org.andcoe.adf.core
 
 class Adb(private val commandRunner: CommandRunner) {
 
+    companion object {
+        const val LOCAL_IP = "127.0.0.1"
+    }
 //    fun killServer()
 //    {
 //        return this.exec('adb kill-server', { ignoreStderr: true })
@@ -20,12 +23,11 @@ class Adb(private val commandRunner: CommandRunner) {
     fun devices(): List<String> {
         var output = commandRunner.exec("adb devices")
         output = output.replace("List of devices attached\n", "")
-        return output.replace("\\sdevice/g", "\n").split("\n")
-
-//        .then(result => result . replace ( / \ sdevice / g, '\n').split('\n'))
-//        .then(result => result . filter (id =>!!id))
-//        .then(result => result . filter (id =>!id.startsWith(LOCAL_IP)))
-//        .then(result => Promise . all (result.map(id => new Device(id))));
+        return output.replace("device", "")
+            .split("\n")
+            .map { it.trim() }
+            .filterNot { it.isEmpty() }
+            .filterNot { it.startsWith(LOCAL_IP) }
     }
 
 //    fun deviceModelFor(deviceId)

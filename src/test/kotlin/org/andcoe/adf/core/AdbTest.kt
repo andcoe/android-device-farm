@@ -6,6 +6,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 class AdbTest {
+
     private companion object {
         const val adbDevicesOutput = """
 List of devices attached
