@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const Adb = require('./adb');
+const DeviceService = require('../service/device.service');
 
 const WATCH_RETRY = 10000;
 const DEVICE_PORT = 5555;
@@ -6,8 +8,12 @@ let localPortCounter = 7777;
 
 class AdbMonitor {
 
-    constructor(deviceDao, adb) {
-        this.deviceDao = deviceDao;
+    constructor(deviceService, adb) {
+        if (!deviceService || !(deviceService instanceof DeviceService))
+            throw new Error('AdbMonitor must have a valid deviceService');
+        if (!adb || !(adb instanceof Adb))
+            throw new Error('AdbMonitor must have a valid adb');
+        this.deviceService = deviceService;
         this.adb = adb
     }
 
@@ -26,7 +32,7 @@ class AdbMonitor {
                 console.log('AdbMonitor => all connected devices:');
                 this.logDevices(devices);
 
-                const preparedDevices = this.deviceDao.devices();
+                const preparedDevices = this.deviceService.devices();
 
                 const newDevices = _.differenceBy(devices, preparedDevices, device => device.id);
                 console.log("AdbMonitor => connected now:");
@@ -40,12 +46,12 @@ class AdbMonitor {
                 console.log("AdbMonitor => preparedDevices: ");
                 this.logDevices(newPreparedDevices);
 
-                this.deviceDao.refreshDevices(newPreparedDevices);
+                this.deviceService.refreshDevices(newPreparedDevices);
 
                 return Promise.all(newDevices.map(device =>
                     //only add to prepared if setup is ok!
                     this.setupDevice(device, 250)
-                        .then(() => this.deviceDao.create(device))))
+                        .then(() => this.deviceService.create(device))))
             })
             .catch(error => console.error('AdbMonitor => error:', error))
             .then(() => {

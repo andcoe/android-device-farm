@@ -24,6 +24,13 @@ class DeviceService {
         };
     }
 
+    create(device) {
+        return this.deviceDao.create(device);
+    }
+
+    refreshDevices(devices) {
+        this.deviceDao.refreshDevices(devices)
+    }
 
 }
 
