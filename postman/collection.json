@@ -1,64 +1,343 @@
 {
-	"variables": [],
 	"info": {
+		"_postman_id": "cddd5ed2-62e8-49a0-9ac7-a24412009993",
 		"name": "android-device-farm",
-		"_postman_id": "82d02cd5-befc-8808-edd5-115bd1a947b6",
-		"description": "",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "devices",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "38756f7d-506a-4a19-84b1-a10256a62f42",
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Extracted deviceId\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    jsonData[0].id",
+							"    pm.globals.set(\"deviceID\", jsonData[0].id)",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
-				"url": "localhost:8000/devices",
 				"method": "GET",
 				"header": [],
-				"body": {},
-				"description": ""
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8000/devices",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"devices"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "leases",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "545cfb81-82a3-44fc-809c-464db668c80a",
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Leases are empty\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.eql([]);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
-				"url": "localhost:8000/leases",
 				"method": "GET",
 				"header": [],
-				"body": {},
-				"description": ""
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8000/leases",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"leases"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "leases (any)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0f0660a0-87de-44e3-86d8-8cfe70166652",
+						"exec": [
+							"",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Extracted leaseID\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.globals.set(\"leaseID\", jsonData.id)",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
-				"url": "localhost:8000/leases",
 				"method": "POST",
 				"header": [],
-				"body": {},
-				"description": ""
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8000/leases",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"leases"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "lease device",
+			"name": "leases Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1a2e0928-4924-4eb6-9c90-e2db458278c7",
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Leases are empty\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.eql(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
-				"url": "localhost:8000/lease/123",
-				"method": "POST",
+				"method": "GET",
 				"header": [],
-				"body": {},
-				"description": ""
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8000/leases",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"leases"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "release",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6010ffb1-4d23-495b-b8b5-7466af57be15",
+						"exec": [
+							"",
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
-				"url": "localhost:8000/leases/123",
 				"method": "DELETE",
 				"header": [],
-				"body": {},
-				"description": ""
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8000/leases/{{leaseID}}",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"leases",
+						"{{leaseID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "lease device",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "679ea271-b181-415c-99ad-ed68084a3cca",
+						"exec": [
+							"",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Extracted leaseID2\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.globals.set(\"leaseID2\", jsonData.id)",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8000/lease/{{deviceID}}",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"lease",
+						"{{deviceID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "leases Copy Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "58bcc3ce-09a5-469d-b7b0-a2039cab0991",
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Leases are empty\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.eql(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8000/leases",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"leases"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "release Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "868f2633-e30b-40cb-89ec-a9c5ad606d6d",
+						"exec": [
+							"",
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8000/leases/{{leaseID2}}",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"leases",
+						"{{leaseID2}}"
+					]
+				}
 			},
 			"response": []
 		}
