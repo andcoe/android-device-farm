@@ -8,12 +8,12 @@ class DeviceService {
     }
 
     devices() {
-        return this.deviceDao.allDevices()
+        return this.deviceDao.devices()
             .map(device => this.device(device.id));
     }
 
     device(id) {
-        const device = this.deviceDao.allDevices().find(device => device.id === id);
+        const device = this.deviceDao.devices().find(device => device.id === id);
         //never more than 1 matching lease
         //no stale leases
         const lease = this.leaseDao.findByDeviceId(device.id);

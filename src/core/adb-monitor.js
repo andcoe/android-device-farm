@@ -26,7 +26,7 @@ class AdbMonitor {
                 console.log('AdbMonitor => all connected devices:');
                 this.logDevices(devices);
 
-                const preparedDevices = this.deviceDao.allDevices();
+                const preparedDevices = this.deviceDao.devices();
 
                 const newDevices = _.differenceBy(devices, preparedDevices, device => device.id);
                 console.log("AdbMonitor => connected now:");
@@ -40,7 +40,7 @@ class AdbMonitor {
                 console.log("AdbMonitor => preparedDevices: ");
                 this.logDevices(newPreparedDevices);
 
-                this.deviceDao.devices = newPreparedDevices; //TODO: remove the mutation
+                this.deviceDao.refreshDevices(newPreparedDevices);
 
                 return Promise.all(newDevices.map(device =>
                     //only add to prepared if setup is ok!
