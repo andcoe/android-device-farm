@@ -16,7 +16,7 @@ class LeaseService {
     leaseAny() {
         const leases = this.leaseDao.allLeases();
 
-        const device = this.deviceDao.allDevices()
+        const device = this.deviceDao.devices()
             .find(device => _.every(leases, lease => lease.device.id !== device.id));
 
         if (device) {

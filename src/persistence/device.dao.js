@@ -1,15 +1,19 @@
 class DeviceDao {
 
     constructor() {
-        this.devices = [];
+        this._devices = [];
     }
 
-    allDevices() {
-        return this.devices;
+    devices() {
+        return this._devices;
+    }
+
+    refreshDevices(devices) {
+        this._devices = devices //TODO: remove the mutation
     }
 
     create(device) {
-        this.devices.push(device);
+        this._devices.push(device);
         return device;
     }
 }

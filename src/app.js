@@ -17,18 +17,17 @@ const deviceDao = new DeviceDao();
 const adb = new Adb(child_process);
 const adbMonitor = new AdbMonitor(deviceDao,adb);
 
-adbMonitor.start();
-
-const service = new DeviceService(deviceDao, leaseDao);
-
+const deviceService = new DeviceService(deviceDao, leaseDao);
 const leaseService = new LeaseService(leaseDao, deviceDao);
+
+adbMonitor.start();
 
 const deleteLeaseIdRegex = new RegExp(("^\/leases\/([^\/]+?)$"));
 
 http.createServer((req, res) => {
     try {
         if (req.method === 'GET' && req.url === '/devices') {
-            const devices = JSON.stringify(service.devices());
+            const devices = JSON.stringify(deviceService.devices());
             res.writeHead(200, {"Content-Type": "application/json"});
             res.end(devices);
         }
