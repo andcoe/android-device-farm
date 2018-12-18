@@ -12,6 +12,11 @@ import java.util.concurrent.TimeUnit
 class AdbTest {
 
     private companion object {
+        const val adbConnectSuccess =
+"""connected to 127.0.0.1:7777
+
+"""
+
         const val adbDevicesOutput = """
 List of devices attached
 127.0.0.1:7778	device
@@ -40,13 +45,10 @@ XM043220	device
     @Test
     fun connectsToDevice() {
         val commandRunner : CommandRunner = mockk()
-        every {commandRunner.exec("adb -s PIXEL connect 127.0.0.1:1234", any(),any(),any())} returns "asdfasf"
-
-
+        every {commandRunner.exec("adb -s PIXEL connect 127.0.0.1:1234", any(),any(),any())} returns adbConnectSuccess
         val adb = Adb(commandRunner)
 
-        val result = adb.connect("PIXEL", 1234)
-        verify {commandRunner.exec("adb -s PIXEL connect localhost:1234")}
-        //assertThat(result).isEqualTo(listOf("XM043220", "3204486bc15611b5"))
+        adb.connect("PIXEL", 1234)
+        verify {commandRunner.exec("adb -s PIXEL connect 127.0.0.1:1234")}
     }
 }
