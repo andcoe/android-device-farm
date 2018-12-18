@@ -29,6 +29,9 @@ XM043220	device
 * daemon not running; starting now at tcp:5037
 * daemon started successfully
 """
+        const val deviceModelOutput = """
+    Aquaris X5 Plus
+"""
     }
 
     private val commandRunner: CommandRunner = mockk()
@@ -63,6 +66,14 @@ XM043220	device
         val adb = Adb(commandRunner)
         val result = adb.devices()
         assertThat(result).isEqualTo(listOf("XM043220", "3204486bc15611b5"))
+    }
+
+    @Test
+    fun returnsDeviceModel() {
+        every { commandRunner.exec("adb -s XM043220 shell getprop ro.product.model") } returns deviceModelOutput
+        val adb = Adb(commandRunner)
+        val result = adb.deviceModelFor("XM043220")
+        assertThat(result).isEqualTo("Aquaris X5 Plus")
     }
 
     @Test

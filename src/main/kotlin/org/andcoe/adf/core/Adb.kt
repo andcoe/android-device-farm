@@ -28,12 +28,12 @@ class Adb(private val commandRunner: CommandRunner) {
             .filterNot { it.startsWith(LOCAL_IP) }
     }
 
-    //    fun deviceModelFor(deviceId)
-//    {
-//        return this.exec(`adb -s ${deviceId} shell getprop ro.product.model`)
-//            .then(model => model . trim ())
-//    }
-//
+    fun deviceModelFor(deviceId: String): String {
+        var output = commandRunner.exec("""adb -s $deviceId shell getprop ro.product.model""")
+        return output.trim()
+    }
+
+    //
 //    fun deviceManufacturerFor(deviceId)
 //    {
 //        return this.exec(`adb -s ${deviceId} shell getprop ro.product.manufacturer`)
