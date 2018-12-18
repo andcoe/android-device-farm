@@ -1,24 +1,24 @@
 package org.andcoe.adf.core
 
+import sun.audio.AudioDevice.device
+
 class Adb(private val commandRunner: CommandRunner) {
 
     companion object {
         const val LOCAL_IP = "127.0.0.1"
     }
-//    fun killServer()
-//    {
+
+//    fun killServer() {
 //        return this.exec('adb kill-server', { ignoreStderr: true })
 //    }
 //
-//    fun startServer()
-//    {
+//    fun startServer() {
 //        return this.exec('adb start-server', { ignoreStderr: true })
 //    }
-//
-//    fun waitForDevice(deviceId)
-//    {
-//        return this.exec(`adb -s ${deviceId} wait-for-device`, { timeout: 15000 })
-//    }
+
+    fun waitForDevice(deviceId: String) {
+        commandRunner.exec("""adb -s $deviceId wait-for-device""")
+    }
 
     fun devices(): List<String> {
         var output = commandRunner.exec("adb devices")

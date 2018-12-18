@@ -1,23 +1,15 @@
 package org.andcoe.adf.core
 
-import io.mockk.Runs
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.io.File
-import java.util.concurrent.TimeUnit
 
 class AdbTest {
 
     private companion object {
-        const val adbConnectSuccess =
-"""connected to 127.0.0.1:7777
-
-"""
-
-        const val adbDevicesOutput = """
+        const val devicesOutput = """
 List of devices attached
 127.0.0.1:7778	device
 127.0.0.1:7777	device
@@ -26,17 +18,23 @@ XM043220	device
 
 
 """
+        const val waitForDeviceOutput = """"""
     }
 
-    class MockedCommandRunner(private val output: String) : CommandRunner {
-        override fun exec(command: String, workingDir: File, timeoutAmount: Long, timeoutUnit: TimeUnit): String {
-            return output
-        }
+    @Test
+    fun executesWaitForDevice() {
+        val commandRunner: CommandRunner = mockk()
+        every { commandRunner.exec("adb -s XM043220 wait-for-device") } returns waitForDeviceOutput
+        val adb = Adb(commandRunner)
+        adb.waitForDevice("XM043220")
+        verify { commandRunner.exec("adb -s XM043220 wait-for-device") }
     }
 
     @Test
     fun returnsDeviceIds() {
-        val adb = Adb(MockedCommandRunner(adbDevicesOutput))
+        val commandRunner: CommandRunner = mockk()
+        every { commandRunner.exec("adb devices") } returns devicesOutput
+        val adb = Adb(commandRunner)
         val result = adb.devices()
         assertThat(result).isEqualTo(listOf("XM043220", "3204486bc15611b5"))
     }
@@ -49,6 +47,6 @@ XM043220	device
         val adb = Adb(commandRunner)
 
         adb.connect("PIXEL", 1234)
-        verify {commandRunner.exec("adb -s PIXEL connect 127.0.0.1:1234")}
+        verify { commandRunner.exec("adb -s PIXEL connect 127.0.0.1:1234") }
     }
 }
