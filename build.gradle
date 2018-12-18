@@ -13,6 +13,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     testCompile "org.assertj:assertj-core:3.11.1"
     testCompile "junit:junit:4.12"
+    testImplementation "io.mockk:mockk:1.8.13"
 }
 
 compileKotlin {

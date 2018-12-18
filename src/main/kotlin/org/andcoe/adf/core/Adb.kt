@@ -30,7 +30,7 @@ class Adb(private val commandRunner: CommandRunner) {
             .filterNot { it.startsWith(LOCAL_IP) }
     }
 
-//    fun deviceModelFor(deviceId)
+    //    fun deviceModelFor(deviceId)
 //    {
 //        return this.exec(`adb -s ${deviceId} shell getprop ro.product.model`)
 //            .then(model => model . trim ())
@@ -60,13 +60,11 @@ class Adb(private val commandRunner: CommandRunner) {
 //            .then(() => this.waitForDevice(deviceId))
 //    }
 //
-//    fun connect(deviceId, port)
-//    {
-//        return this.exec(`adb -s ${deviceId} connect ${LOCAL_IP}:${port}`)
-//            .then(result => {
-//                if (!result.startsWith('connected to')) throw Error(`unable to connect to: ${LOCAL_IP}:${port}`);
-//            })
-//        .then(() => this.waitForDevice(deviceId))
-//    }
+    fun connect(deviceId: String, port: Int) {
+        val output = commandRunner.exec("adb -s ${deviceId} connect ${LOCAL_IP}:${port}")
+
+        if (!output.startsWith("connected to")) throw Error("unable to connect to: ${LOCAL_IP}:${port}");
+
+    }
 
 }
