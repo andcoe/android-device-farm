@@ -29,17 +29,17 @@ class Adb(private val commandRunner: CommandRunner) {
     }
 
     fun deviceModelFor(deviceId: String): String {
-        var output = commandRunner.exec("""adb -s $deviceId shell getprop ro.product.model""")
+        val output = commandRunner.exec("""adb -s $deviceId shell getprop ro.product.model""")
+        return output.trim()
+    }
+
+
+    fun deviceManufacturerFor(deviceId: String): String {
+        val output = commandRunner.exec("""adb -s $deviceId shell getprop ro.product.manufacturer""")
         return output.trim()
     }
 
     //
-//    fun deviceManufacturerFor(deviceId)
-//    {
-//        return this.exec(`adb -s ${deviceId} shell getprop ro.product.manufacturer`)
-//            .then(manufacturer => manufacturer . trim ())
-//    }
-//
 //    fun tcpIpFor(deviceId, timeout)
 //    {
 //        return this.exec(`adb -s ${deviceId} tcpip 5555`, { sleep: timeout })

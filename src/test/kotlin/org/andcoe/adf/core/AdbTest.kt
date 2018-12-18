@@ -3,36 +3,11 @@ package org.andcoe.adf.core
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import util.AdbOutput.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class AdbTest {
-
-    private companion object {
-
-        const val devicesOutput = """
-List of devices attached
-127.0.0.1:7778	device
-127.0.0.1:7777	device
-XM043220	device
-3204486bc15611b5	device
-
-
-"""
-
-        const val adbConnectSuccess = """
-            connected to 127.0.0.1:7777
-
-"""
-
-        const val adbStartServer = """
-* daemon not running; starting now at tcp:5037
-* daemon started successfully
-"""
-        const val deviceModelOutput = """
-    Aquaris X5 Plus
-"""
-    }
 
     private val commandRunner: CommandRunner = mockk()
 
@@ -46,7 +21,7 @@ XM043220	device
 
     @Test
     fun startsServer() {
-        every { commandRunner.exec("adb start-server") } returns adbStartServer
+        every { commandRunner.exec("adb start-server") } returns ADB_START_SERVER.output
         val adb = Adb(commandRunner)
         adb.startServer()
         verify { commandRunner.exec("adb start-server") }
@@ -62,23 +37,34 @@ XM043220	device
 
     @Test
     fun returnsDeviceIds() {
-        every { commandRunner.exec("adb devices") } returns devicesOutput
+        every { commandRunner.exec("adb devices") } returns ADB_DEVICES.output
         val adb = Adb(commandRunner)
         val result = adb.devices()
         assertThat(result).isEqualTo(listOf("XM043220", "3204486bc15611b5"))
+        verify { commandRunner.exec("adb devices") }
     }
 
     @Test
     fun returnsDeviceModel() {
-        every { commandRunner.exec("adb -s XM043220 shell getprop ro.product.model") } returns deviceModelOutput
+        every { commandRunner.exec("adb -s XM043220 shell getprop ro.product.model") } returns ADB_DEVICE_MODEL.output
         val adb = Adb(commandRunner)
         val result = adb.deviceModelFor("XM043220")
         assertThat(result).isEqualTo("Aquaris X5 Plus")
+        verify { commandRunner.exec("adb -s XM043220 shell getprop ro.product.model") }
+    }
+
+    @Test
+    fun returnsDeviceManufacturerFor() {
+        every { commandRunner.exec("adb -s XM043220 shell getprop ro.product.manufacturer") } returns ADB_DEVICE_MANUFACTURER.output
+        val adb = Adb(commandRunner)
+        val result = adb.deviceManufacturerFor("XM043220")
+        assertThat(result).isEqualTo("bq")
+        verify { commandRunner.exec("adb -s XM043220 shell getprop ro.product.manufacturer") }
     }
 
     @Test
     fun connectsToDevice() {
-        every { commandRunner.exec("adb -s PIXEL connect 127.0.0.1:1234") } returns adbConnectSuccess
+        every { commandRunner.exec("adb -s PIXEL connect 127.0.0.1:1234") } returns ADB_CONNECT_SUCCESS.output
         val adb = Adb(commandRunner)
 
         adb.connect("PIXEL", 1234)
