@@ -19,6 +19,12 @@ XM043220	device
 
 """
         const val waitForDeviceOutput = """"""
+
+
+        const val adbConnectSuccess =
+            """connected to 127.0.0.1:7777
+
+"""
     }
 
     @Test
@@ -39,11 +45,10 @@ XM043220	device
         assertThat(result).isEqualTo(listOf("XM043220", "3204486bc15611b5"))
     }
 
-
     @Test
     fun connectsToDevice() {
         val commandRunner : CommandRunner = mockk()
-        every {commandRunner.exec("adb -s PIXEL connect 127.0.0.1:1234", any(),any(),any())} returns adbConnectSuccess
+        every { commandRunner.exec("adb -s PIXEL connect 127.0.0.1:1234", any(), any(), any()) } returns adbConnectSuccess
         val adb = Adb(commandRunner)
 
         adb.connect("PIXEL", 1234)
