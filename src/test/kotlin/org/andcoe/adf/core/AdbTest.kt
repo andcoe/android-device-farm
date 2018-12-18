@@ -18,8 +18,6 @@ XM043220	device
 
 
 """
-        const val waitForDeviceOutput = """"""
-
 
         const val adbConnectSuccess =
                 """connected to 127.0.0.1:7777
@@ -29,12 +27,36 @@ XM043220	device
                 """FA79L1A04130 tcp:7777 tcp:5555
 
 """
+
+        const val adbStartServer = """
+* daemon not running; starting now at tcp:5037
+* daemon started successfully
+"""
     }
 
     @Test
-    fun executesWaitForDevice() {
+    fun killsServer() {
         val commandRunner: CommandRunner = mockk()
-        every { commandRunner.exec("adb -s XM043220 wait-for-device") } returns waitForDeviceOutput
+        every { commandRunner.exec("adb kill-server") } returns ""
+        val adb = Adb(commandRunner)
+        adb.killServer()
+        verify { commandRunner.exec("adb kill-server") }
+    }
+
+    @Test
+    fun startsServer() {
+        val commandRunner: CommandRunner = mockk()
+        every { commandRunner.exec("adb start-server") } returns adbStartServer
+
+        val adb = Adb(commandRunner)
+        adb.startServer()
+        verify { commandRunner.exec("adb start-server") }
+    }
+
+    @Test
+    fun waitsForDevice() {
+        val commandRunner: CommandRunner = mockk()
+        every { commandRunner.exec("adb -s XM043220 wait-for-device") } returns ""
         val adb = Adb(commandRunner)
         adb.waitForDevice("XM043220")
         verify { commandRunner.exec("adb -s XM043220 wait-for-device") }
