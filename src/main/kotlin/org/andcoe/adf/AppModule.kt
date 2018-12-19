@@ -12,6 +12,7 @@ import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import org.andcoe.adf.devices.DeviceResource
+import org.andcoe.adf.exceptions.ResourceNotFound
 
 class AppModule(private val deviceResource: DeviceResource) {
 
@@ -22,13 +23,16 @@ class AppModule(private val deviceResource: DeviceResource) {
         }
 
         install(StatusPages) {
-            //            exception<ResourceNotFound> { call.respond(HttpStatusCode.NotFound) }
+            exception<ResourceNotFound> { call.respond(HttpStatusCode.NotFound, mapOf("error" to it.message)) }
         }
 
         routing {
             get("/devices") {
-                val devices = deviceResource.devices()
-                call.respond(HttpStatusCode.OK, devices)
+                call.respond(HttpStatusCode.OK, deviceResource.devices())
+            }
+            get("/devices/{deviceId}") {
+                val deviceId: String = call.parameters["deviceId"]!!
+                call.respond(HttpStatusCode.OK, deviceResource.devices(deviceId))
             }
         }
     }

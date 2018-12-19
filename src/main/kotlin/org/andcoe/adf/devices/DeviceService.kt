@@ -6,6 +6,10 @@ class DeviceService(private val deviceDao: DeviceDao) {
         return deviceDao.devices()
     }
 
+    fun devices(deviceId: DeviceId): Device? {
+        return deviceDao.devices(deviceId)
+    }
+
     fun create(deviceId: DeviceId): Device {
         return deviceDao.create(deviceId)
     }

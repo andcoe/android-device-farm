@@ -23,4 +23,10 @@ class DeviceResourceTest {
             )
         )
     }
+
+    @Test
+    fun returnsDeviceById() {
+        val deviceResource = resourceReturningDevices()
+        assertThat(deviceResource.devices("PIXEL")).isEqualTo(Device(DeviceId("PIXEL")))
+    }
 }

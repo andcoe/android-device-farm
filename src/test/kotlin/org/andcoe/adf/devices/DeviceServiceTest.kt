@@ -26,6 +26,15 @@ class DeviceServiceTest {
     }
 
     @Test
+    fun returnsDevicesById() {
+        val deviceDao = DeviceDao()
+        deviceDao.create(DeviceId("123"))
+        deviceDao.create(DeviceId("456"))
+        val deviceService = DeviceService(deviceDao)
+        assertThat(deviceService.devices(DeviceId("123"))).isEqualTo(Device(DeviceId("123")))
+    }
+
+    @Test
     fun createsDevice() {
         val deviceService = DeviceService(DeviceDao())
         val newDevice = deviceService.create(DeviceId("123"))
@@ -35,7 +44,8 @@ class DeviceServiceTest {
         assertThat(newDevice).isEqualTo(Device(DeviceId("123")))
     }
 
-    @Test fun removesDevice() {
+    @Test
+    fun removesDevice() {
         val deviceDao = DeviceDao()
         deviceDao.create(DeviceId("123"))
         deviceDao.create(DeviceId("456"))

@@ -24,6 +24,5 @@ fun main(args: Array<String>) {
         factory = Netty,
         port = 8000,
         module = AppModule(deviceResource = deviceResource).module()
-    )
-    .start(wait = true)
+    ).start(wait = true)
 }
