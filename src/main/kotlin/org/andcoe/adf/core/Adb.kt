@@ -2,7 +2,7 @@ package org.andcoe.adf.core
 
 class Adb(private val commandRunner: CommandRunner) {
 
-    companion object {
+    private companion object {
         const val LOCAL_IP = "127.0.0.1"
     }
 
@@ -15,7 +15,7 @@ class Adb(private val commandRunner: CommandRunner) {
     }
 
     fun waitForDevice(deviceId: String) {
-        commandRunner.exec("""adb -s $deviceId wait-for-device""")
+        commandRunner.exec("adb -s $deviceId wait-for-device")
     }
 
     fun devices(): List<String> =
@@ -28,15 +28,15 @@ class Adb(private val commandRunner: CommandRunner) {
             .filterNot { it.startsWith(LOCAL_IP) }
 
     fun deviceModelFor(deviceId: String): String =
-        commandRunner.exec("""adb -s $deviceId shell getprop ro.product.model""").trim()
+        commandRunner.exec("adb -s $deviceId shell getprop ro.product.model").trim()
 
 
     fun deviceManufacturerFor(deviceId: String): String =
-        commandRunner.exec("""adb -s $deviceId shell getprop ro.product.manufacturer""")
+        commandRunner.exec("adb -s $deviceId shell getprop ro.product.manufacturer")
             .trim()
 
     fun tcpIpFor(deviceId: String) {
-        commandRunner.exec("""adb -s $deviceId tcpip 5555""")
+        commandRunner.exec("adb -s $deviceId tcpip 5555")
         waitForDevice(deviceId)
     }
 

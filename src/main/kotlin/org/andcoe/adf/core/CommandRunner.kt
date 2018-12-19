@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit
 class CommandRunner {
 
     fun exec(command: String, timeoutAmount: Long = 15, timeoutUnit: TimeUnit = TimeUnit.SECONDS): String {
-        println("""> $command""")
+//        println("""> $command""")
 
         val process = ProcessBuilder(*command.split("\\s".toRegex()).toTypedArray())
             .redirectOutput(ProcessBuilder.Redirect.PIPE)
@@ -22,7 +22,7 @@ class CommandRunner {
         }
 
         val output = process.inputStream.bufferedReader().readText()
-        println("""< $output""")
+//        println("""< $output""")
         return output
     }
 }

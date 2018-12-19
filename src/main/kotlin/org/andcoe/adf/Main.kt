@@ -8,6 +8,8 @@ fun main(args: Array<String>) {
     val adb = Adb(CommandRunner())
     val adbMonitor = AdbMonitor(adb)
 
-    adb.devices().forEach { adbMonitor.setupDevice(it) }
+//    adb.devices().forEach { adbMonitor.setupDevice(it) }
+
+    adbMonitor.startScanning()
 }
 
