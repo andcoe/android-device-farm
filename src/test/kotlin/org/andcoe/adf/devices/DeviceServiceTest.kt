@@ -28,7 +28,7 @@ class DeviceServiceTest {
     @Test
     fun createsDevice() {
         val deviceService = DeviceService(DeviceDao())
-        val newDevice = deviceService.createDevice(DeviceId("123"))
+        val newDevice = deviceService.create(DeviceId("123"))
         assertThat(deviceService.devices()).isEqualTo(
             mapOf(DeviceId("123") to Device(DeviceId("123")))
         )

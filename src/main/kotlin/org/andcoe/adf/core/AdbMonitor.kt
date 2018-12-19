@@ -50,7 +50,7 @@ class AdbMonitor(
 
         newDevices.forEach {
             setupDevice(it.id)
-            deviceService.createDevice(it)
+            deviceService.create(it)
         }
 
         println("AdbMonitor => prepared devices: ${deviceService.devices().map { it.key }}")

@@ -40,12 +40,12 @@ class AdbMonitorTest {
     fun handlesNewDeviceConnected() {
         mockAdbCommandsForDevice(deviceId = DeviceId("PIXEL"), tcpIpPort = 7777)
         every { deviceService.devices() } returns emptyMap()
-        every { deviceService.createDevice(DeviceId("PIXEL")) } returns Device(DeviceId("PIXEL"))
+        every { deviceService.create(DeviceId("PIXEL")) } returns Device(DeviceId("PIXEL"))
 
         adbMonitor.refreshDevicesWith(listOf(DeviceId("PIXEL")))
 
         verify { deviceService.devices() }
-        verify(exactly = 1) { deviceService.createDevice(DeviceId("PIXEL")) }
+        verify(exactly = 1) { deviceService.create(DeviceId("PIXEL")) }
         verifyAdbCommandsForDevice(deviceId = DeviceId("PIXEL"), tcpIpPort = 7777)
     }
 
@@ -54,14 +54,14 @@ class AdbMonitorTest {
         mockAdbCommandsForDevice(deviceId = DeviceId("PIXEL"), tcpIpPort = 7777)
         mockAdbCommandsForDevice(deviceId = DeviceId("SAMSUNG"), tcpIpPort = 7778)
         every { deviceService.devices() } returns emptyMap()
-        every { deviceService.createDevice(DeviceId("PIXEL")) } returns Device(DeviceId("PIXEL"))
-        every { deviceService.createDevice(DeviceId("SAMSUNG")) } returns Device(DeviceId("SAMSUNG"))
+        every { deviceService.create(DeviceId("PIXEL")) } returns Device(DeviceId("PIXEL"))
+        every { deviceService.create(DeviceId("SAMSUNG")) } returns Device(DeviceId("SAMSUNG"))
 
         adbMonitor.refreshDevicesWith(listOf(DeviceId("PIXEL"), DeviceId("SAMSUNG")))
 
         verify { deviceService.devices() }
-        verify(exactly = 1) { deviceService.createDevice(DeviceId("PIXEL")) }
-        verify(exactly = 1) { deviceService.createDevice(DeviceId("SAMSUNG")) }
+        verify(exactly = 1) { deviceService.create(DeviceId("PIXEL")) }
+        verify(exactly = 1) { deviceService.create(DeviceId("SAMSUNG")) }
         verifyAdbCommandsForDevice(deviceId = DeviceId("PIXEL"), tcpIpPort = 7777)
         verifyAdbCommandsForDevice(deviceId = DeviceId("SAMSUNG"), tcpIpPort = 7778)
     }
