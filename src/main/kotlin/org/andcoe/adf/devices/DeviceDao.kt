@@ -13,4 +13,8 @@ class DeviceDao {
         devicesDb[deviceId] = device
         return device
     }
+
+    fun remove(deviceId: DeviceId) {
+        devicesDb.remove(deviceId)
+    }
 }

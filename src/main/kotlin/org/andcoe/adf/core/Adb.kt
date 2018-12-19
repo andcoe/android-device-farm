@@ -1,5 +1,7 @@
 package org.andcoe.adf.core
 
+import org.andcoe.adf.devices.DeviceId
+
 class Adb(private val commandRunner: CommandRunner) {
 
     private companion object {
@@ -18,7 +20,7 @@ class Adb(private val commandRunner: CommandRunner) {
         commandRunner.exec("adb -s $deviceId wait-for-device")
     }
 
-    fun devices(): List<String> =
+    fun devices(): List<DeviceId> =
         commandRunner.exec("adb devices")
             .replace("List of devices attached\n", "")
             .replace("device", "")
@@ -26,6 +28,7 @@ class Adb(private val commandRunner: CommandRunner) {
             .map { it.trim() }
             .filterNot { it.isEmpty() }
             .filterNot { it.startsWith(LOCAL_IP) }
+            .map { DeviceId(it) }
 
     fun deviceModelFor(deviceId: String): String =
         commandRunner.exec("adb -s $deviceId shell getprop ro.product.model").trim()

@@ -18,4 +18,13 @@ class DeviceDaoTest {
         assertThat(deviceDao.devices()).isEqualTo(mapOf(DeviceId("123") to Device(DeviceId("123"))))
         assertThat(newDevice).isEqualTo(Device(DeviceId("123")))
     }
+
+    @Test
+    fun removesDevice() {
+        val deviceDao = DeviceDao()
+        deviceDao.create(DeviceId("123"))
+        deviceDao.create(DeviceId("456"))
+        deviceDao.remove(DeviceId("123"))
+        assertThat(deviceDao.devices()).isEqualTo(mapOf(DeviceId("456") to Device(DeviceId("456"))))
+    }
 }

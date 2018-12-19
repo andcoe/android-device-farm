@@ -3,6 +3,7 @@ package org.andcoe.adf.core
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.andcoe.adf.devices.DeviceId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import util.AdbOutput.*
@@ -49,7 +50,7 @@ class AdbTest {
         every { commandRunner.exec("adb devices") } returns ADB_DEVICES.output
         val adb = Adb(commandRunner)
         val result = adb.devices()
-        assertThat(result).isEqualTo(listOf("PIXEL", "SAMSUNG"))
+        assertThat(result).isEqualTo(listOf(DeviceId("PIXEL"), DeviceId("SAMSUNG")))
         verify { commandRunner.exec("adb devices") }
     }
 

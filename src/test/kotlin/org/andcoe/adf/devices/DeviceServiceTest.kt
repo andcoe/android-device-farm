@@ -7,8 +7,7 @@ class DeviceServiceTest {
 
     @Test
     fun returnsEmptyWhenNoDevices() {
-        val deviceDao = DeviceDao()
-        val deviceService = DeviceService(deviceDao)
+        val deviceService = DeviceService(DeviceDao())
         assertThat(deviceService.devices()).isEqualTo(emptyMap<DeviceId, Device>())
     }
 
@@ -28,15 +27,23 @@ class DeviceServiceTest {
 
     @Test
     fun createsDevice() {
-        val deviceDao = DeviceDao()
-        val deviceService = DeviceService(deviceDao)
+        val deviceService = DeviceService(DeviceDao())
         val newDevice = deviceService.createDevice(DeviceId("123"))
         assertThat(deviceService.devices()).isEqualTo(
-            mapOf(
-                DeviceId("123") to Device(DeviceId("123"))
-            )
+            mapOf(DeviceId("123") to Device(DeviceId("123")))
         )
         assertThat(newDevice).isEqualTo(Device(DeviceId("123")))
+    }
+
+    @Test fun removesDevice() {
+        val deviceDao = DeviceDao()
+        deviceDao.create(DeviceId("123"))
+        deviceDao.create(DeviceId("456"))
+        val deviceService = DeviceService(deviceDao)
+        deviceService.remove(DeviceId("123"))
+        assertThat(deviceService.devices()).isEqualTo(
+            mapOf(DeviceId("456") to Device(DeviceId("456")))
+        )
     }
 
 }

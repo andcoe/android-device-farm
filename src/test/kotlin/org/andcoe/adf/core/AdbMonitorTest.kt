@@ -1,8 +1,9 @@
 package org.andcoe.adf.core
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
+import org.andcoe.adf.devices.Device
+import org.andcoe.adf.devices.DeviceId
+import org.andcoe.adf.devices.DeviceService
 import org.junit.Test
 import util.AdbOutput
 import util.AdbOutput.ADB_TCP_IP
@@ -11,10 +12,14 @@ import util.AdbOutput.ADB_WAIT_FOR_DEVICE
 class AdbMonitorTest {
 
     private val commandRunner: CommandRunner = mockk()
+    private val deviceService: DeviceService = mockk()
+    private val adbMonitor = AdbMonitor(
+        deviceService = deviceService,
+        adb = Adb(commandRunner)
+    )
 
     @Test
-    fun restartsAdb() {
-        val adbMonitor = AdbMonitor(Adb(commandRunner))
+    fun restartsAdbAndRunsCommands() {
         every { commandRunner.exec("adb kill-server") } returns AdbOutput.ADB_KILL_SERVER.output
         every { commandRunner.exec("adb start-server") } returns AdbOutput.ADB_START_SERVER.output
 
@@ -25,45 +30,82 @@ class AdbMonitorTest {
     }
 
     @Test
-    fun scansDevices() {
-        val adbMonitor = AdbMonitor(Adb(commandRunner))
+    fun handlesNoDevices() {
+        every { deviceService.devices() } returns emptyMap()
+        adbMonitor.refreshDevicesWith(listOf())
+        verify { deviceService.devices() }
+    }
 
-        every { commandRunner.exec("adb devices") } returns AdbOutput.ADB_DEVICES.output
+    @Test
+    fun handlesNewDeviceConnected() {
+        mockAdbCommandsForDevice(deviceId = DeviceId("PIXEL"), tcpIpPort = 7777)
+        every { deviceService.devices() } returns emptyMap()
+        every { deviceService.createDevice(DeviceId("PIXEL")) } returns Device(DeviceId("PIXEL"))
 
-        //setup PIXEL
-        every { commandRunner.exec("adb -s PIXEL tcpip 5555") } returns ADB_TCP_IP.output
-        every { commandRunner.exec("adb -s PIXEL wait-for-device") } returns ADB_WAIT_FOR_DEVICE.output
-        every { commandRunner.exec("adb -s PIXEL forward tcp:7777 tcp:5555") } returns AdbOutput.ADB_FORWARD_IP.output
-        every { commandRunner.exec("adb -s PIXEL connect 127.0.0.1:7777") } returns AdbOutput.ADB_CONNECT_SUCCESS.output
-        every { commandRunner.exec("adb -s PIXEL shell getprop ro.product.model") } returns AdbOutput.ADB_DEVICE_MODEL.output
-        every { commandRunner.exec("adb -s PIXEL shell getprop ro.product.manufacturer") } returns AdbOutput.ADB_DEVICE_MANUFACTURER.output
+        adbMonitor.refreshDevicesWith(listOf(DeviceId("PIXEL")))
 
-        //setup SAMSUNG
-        every { commandRunner.exec("adb -s SAMSUNG tcpip 5555") } returns ADB_TCP_IP.output
-        every { commandRunner.exec("adb -s SAMSUNG wait-for-device") } returns ADB_WAIT_FOR_DEVICE.output
-        every { commandRunner.exec("adb -s SAMSUNG forward tcp:7778 tcp:5555") } returns AdbOutput.ADB_FORWARD_IP.output
-        every { commandRunner.exec("adb -s SAMSUNG connect 127.0.0.1:7778") } returns AdbOutput.ADB_CONNECT_SUCCESS.output
-        every { commandRunner.exec("adb -s SAMSUNG shell getprop ro.product.model") } returns AdbOutput.ADB_DEVICE_MODEL.output
-        every { commandRunner.exec("adb -s SAMSUNG shell getprop ro.product.manufacturer") } returns AdbOutput.ADB_DEVICE_MANUFACTURER.output
+        verify { deviceService.devices() }
+        verify(exactly = 1) { deviceService.createDevice(DeviceId("PIXEL")) }
+        verifyAdbCommandsForDevice(deviceId = DeviceId("PIXEL"), tcpIpPort = 7777)
+    }
 
-        adbMonitor.scanDevices()
+    @Test
+    fun handlesMultipleNewDevicesConnected() {
+        mockAdbCommandsForDevice(deviceId = DeviceId("PIXEL"), tcpIpPort = 7777)
+        mockAdbCommandsForDevice(deviceId = DeviceId("SAMSUNG"), tcpIpPort = 7778)
+        every { deviceService.devices() } returns emptyMap()
+        every { deviceService.createDevice(DeviceId("PIXEL")) } returns Device(DeviceId("PIXEL"))
+        every { deviceService.createDevice(DeviceId("SAMSUNG")) } returns Device(DeviceId("SAMSUNG"))
 
-        verify { commandRunner.exec("adb devices") }
+        adbMonitor.refreshDevicesWith(listOf(DeviceId("PIXEL"), DeviceId("SAMSUNG")))
 
-        //verify PIXEL
-        verify { commandRunner.exec("adb -s PIXEL tcpip 5555") }
-        verify { commandRunner.exec("adb -s PIXEL wait-for-device") }
-        verify { commandRunner.exec("adb -s PIXEL forward tcp:7777 tcp:5555") }
-        verify { commandRunner.exec("adb -s PIXEL connect 127.0.0.1:7777") }
-        verify { commandRunner.exec("adb -s PIXEL shell getprop ro.product.model") }
-        verify { commandRunner.exec("adb -s PIXEL shell getprop ro.product.manufacturer") }
+        verify { deviceService.devices() }
+        verify(exactly = 1) { deviceService.createDevice(DeviceId("PIXEL")) }
+        verify(exactly = 1) { deviceService.createDevice(DeviceId("SAMSUNG")) }
+        verifyAdbCommandsForDevice(deviceId = DeviceId("PIXEL"), tcpIpPort = 7777)
+        verifyAdbCommandsForDevice(deviceId = DeviceId("SAMSUNG"), tcpIpPort = 7778)
+    }
 
-        //verify SAMSUNG
-        verify { commandRunner.exec("adb -s SAMSUNG tcpip 5555") }
-        verify { commandRunner.exec("adb -s SAMSUNG wait-for-device") }
-        verify { commandRunner.exec("adb -s SAMSUNG forward tcp:7778 tcp:5555") }
-        verify { commandRunner.exec("adb -s SAMSUNG connect 127.0.0.1:7778") }
-        verify { commandRunner.exec("adb -s SAMSUNG shell getprop ro.product.model") }
-        verify { commandRunner.exec("adb -s SAMSUNG shell getprop ro.product.manufacturer") }
+    @Test
+    fun handlesDeviceRemoved() {
+        every { deviceService.devices() } returns mapOf(DeviceId("PIXEL") to Device(DeviceId("PIXEL")))
+        every { deviceService.remove(DeviceId("PIXEL")) } just Runs
+
+        adbMonitor.refreshDevicesWith(listOf())
+
+        verify { deviceService.devices() }
+        verify { deviceService.remove(DeviceId("PIXEL")) }
+    }
+
+    @Test
+    fun handlesDeviceRemovedAndKeepsExisting() {
+        every { deviceService.devices() } returns mapOf(
+            DeviceId("PIXEL") to Device(DeviceId("PIXEL")),
+            DeviceId("SAMSUNG") to Device(DeviceId("SAMSUNG"))
+        )
+        every { deviceService.remove(DeviceId("PIXEL")) } just Runs
+
+        adbMonitor.refreshDevicesWith(listOf(DeviceId("SAMSUNG")))
+
+        verify { deviceService.devices() }
+        verify { deviceService.remove(DeviceId("PIXEL")) }
+    }
+
+    private fun mockAdbCommandsForDevice(deviceId: DeviceId, tcpIpPort: Int) {
+        every { commandRunner.exec("adb -s ${deviceId.id} tcpip 5555") } returns ADB_TCP_IP.output
+        every { commandRunner.exec("adb -s ${deviceId.id} wait-for-device") } returns ADB_WAIT_FOR_DEVICE.output
+        every { commandRunner.exec("adb -s ${deviceId.id} forward tcp:$tcpIpPort tcp:5555") } returns AdbOutput.ADB_FORWARD_IP.output
+        every { commandRunner.exec("adb -s ${deviceId.id} connect 127.0.0.1:$tcpIpPort") } returns AdbOutput.ADB_CONNECT_SUCCESS.output
+        every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.model") } returns AdbOutput.ADB_DEVICE_MODEL.output
+        every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.manufacturer") } returns AdbOutput.ADB_DEVICE_MANUFACTURER.output
+    }
+
+    private fun verifyAdbCommandsForDevice(deviceId: DeviceId, tcpIpPort: Int) {
+        verify { commandRunner.exec("adb -s ${deviceId.id} tcpip 5555") }
+        verify { commandRunner.exec("adb -s ${deviceId.id} wait-for-device") }
+        verify { commandRunner.exec("adb -s ${deviceId.id} forward tcp:$tcpIpPort tcp:5555") }
+        verify { commandRunner.exec("adb -s ${deviceId.id} connect 127.0.0.1:$tcpIpPort") }
+        verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.model") }
+        verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.manufacturer") }
     }
 }

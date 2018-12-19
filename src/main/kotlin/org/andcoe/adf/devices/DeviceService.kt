@@ -9,4 +9,8 @@ class DeviceService(private val deviceDao: DeviceDao) {
     fun createDevice(deviceId: DeviceId): Device {
         return deviceDao.create(deviceId)
     }
+
+    fun remove(deviceId: DeviceId) {
+        deviceDao.remove(deviceId)
+    }
 }

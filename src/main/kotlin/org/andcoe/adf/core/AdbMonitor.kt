@@ -1,13 +1,18 @@
 package org.andcoe.adf.core
 
-class AdbMonitor(private val adb: Adb) {
+import org.andcoe.adf.devices.DeviceId
+import org.andcoe.adf.devices.DeviceService
+
+class AdbMonitor(
+    private val deviceService: DeviceService,
+    private val adb: Adb
+) {
 
     var localPortCounter = 7777
-    var preparedDevices = mutableListOf<String>()
 
     private companion object {
         const val DEVICE_PORT = 5555
-        const val SCAN_RETRY_EVERY = 5_000L
+        const val SCAN_RETRY_EVERY = 2_000L
     }
 
     fun startScanning() {
@@ -16,7 +21,8 @@ class AdbMonitor(private val adb: Adb) {
             println("=========================================================================")
             println("============================== scanDevices ==============================")
             println("=========================================================================")
-            scanDevices()
+            val connectedDevices = adb.devices()
+            refreshDevicesWith(connectedDevices)
             println("AdbMonitor => scheduling another scan in ${SCAN_RETRY_EVERY}ms")
             Thread.sleep(SCAN_RETRY_EVERY)
         }
@@ -27,25 +33,27 @@ class AdbMonitor(private val adb: Adb) {
         adb.startServer()
     }
 
-    fun scanDevices() {
-        val devices = adb.devices()
-        println("AdbMonitor => connected devices: $devices")
+    fun refreshDevicesWith(connectedDevices: List<DeviceId>) {
+        println("AdbMonitor => connected devices: $connectedDevices")
 
-        val newDevices = difference(devices, preparedDevices)
-        println("AdbMonitor => connected now: $newDevices")
+        val preparedDevices = deviceService.devices()
 
-        val removedDevices = difference(preparedDevices, devices)
+        val removedDevices: List<DeviceId> = preparedDevices.keys.filter { !connectedDevices.contains(it) }
         println("AdbMonitor => removed now: $removedDevices")
 
-        val newPreparedDevices = difference(preparedDevices, removedDevices)
-        preparedDevices = newPreparedDevices.toMutableList()
+        preparedDevices
+            .filter { removedDevices.contains(it.key) }
+            .map { deviceService.remove(it.key) }
+
+        val newDevices: List<DeviceId> = connectedDevices.filter { !preparedDevices.containsKey(it) }
+        println("AdbMonitor => connected now: $newDevices")
 
         newDevices.forEach {
-            setupDevice(it)
-            preparedDevices.add(it)
+            setupDevice(it.id)
+            deviceService.createDevice(it)
         }
 
-        println("AdbMonitor => prepared devices: $preparedDevices")
+        println("AdbMonitor => prepared devices: ${deviceService.devices().map { it.key }}")
     }
 
     private fun setupDevice(deviceId: String) {
@@ -55,12 +63,6 @@ class AdbMonitor(private val adb: Adb) {
         adb.connect(deviceId, localPort)
         adb.deviceModelFor(deviceId)
         adb.deviceManufacturerFor(deviceId)
-    }
-
-    private fun <T> difference(list1: List<T>, list2: List<T>): List<T> {
-        val newList = mutableListOf<T>()
-        list1.forEach { if (!list2.contains(it)) newList.add(it) }
-        return newList
     }
 
 }
