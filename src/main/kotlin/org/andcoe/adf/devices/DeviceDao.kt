@@ -13,6 +13,8 @@ class DeviceDao(private val devicesDb: MutableMap<DeviceId, Device> = mutableMap
             deviceId = DeviceId(adbDevice.deviceId),
             model = adbDevice.model,
             manufacturer = adbDevice.manufacturer,
+            androidVersion = adbDevice.androidVersion,
+            apiLevel = adbDevice.apiLevel,
             port = adbDevice.port
         )
         devicesDb[device.deviceId] = device

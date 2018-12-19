@@ -30,13 +30,18 @@ class Adb(private val commandRunner: CommandRunner) {
             .filterNot { it.startsWith(LOCAL_IP) }
             .map { DeviceId(it) }
 
-    fun deviceModelFor(deviceId: String): String =
+    fun modelFor(deviceId: String): String =
         commandRunner.exec("adb -s $deviceId shell getprop ro.product.model").trim()
 
 
-    fun deviceManufacturerFor(deviceId: String): String =
-        commandRunner.exec("adb -s $deviceId shell getprop ro.product.manufacturer")
-            .trim()
+    fun manufacturerFor(deviceId: String): String =
+        commandRunner.exec("adb -s $deviceId shell getprop ro.product.manufacturer").trim()
+
+    fun androidVersionFor(deviceId: String): String =
+        commandRunner.exec("adb -s $deviceId shell getprop ro.build.version.release").trim()
+
+    fun apiLevelFor(deviceId: String): String =
+        commandRunner.exec("adb -s $deviceId shell getprop ro.build.version.sdk").trim()
 
     fun tcpIpFor(deviceId: String) {
         commandRunner.exec("adb -s $deviceId tcpip 5555")

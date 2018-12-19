@@ -57,21 +57,30 @@ class AdbTest {
     }
 
     @Test
-    fun returnsDeviceModel() {
+    fun returnsModel() {
         every { commandRunner.exec("adb -s ${ADB_PIXEL.deviceId} shell getprop ro.product.model") } returns ADB_DEVICE_MODEL_PIXEL.output
         val adb = Adb(commandRunner)
-        val result = adb.deviceModelFor(ADB_PIXEL.deviceId)
+        val result = adb.modelFor(ADB_PIXEL.deviceId)
         assertThat(result).isEqualTo(ADB_PIXEL.model)
         verify { commandRunner.exec("adb -s ${ADB_PIXEL.deviceId} shell getprop ro.product.model") }
     }
 
     @Test
-    fun returnsDeviceManufacturer() {
+    fun returnsManufacturer() {
         every { commandRunner.exec("adb -s ${ADB_PIXEL.deviceId} shell getprop ro.product.manufacturer") } returns ADB_DEVICE_MANUFACTURER_GOOGLE.output
         val adb = Adb(commandRunner)
-        val result = adb.deviceManufacturerFor(ADB_PIXEL.deviceId)
+        val result = adb.manufacturerFor(ADB_PIXEL.deviceId)
         assertThat(result).isEqualTo(ADB_PIXEL.manufacturer)
         verify { commandRunner.exec("adb -s ${ADB_PIXEL.deviceId} shell getprop ro.product.manufacturer") }
+    }
+
+    @Test
+    fun returnsAndroidVersion() {
+        every { commandRunner.exec("adb -s ${ADB_PIXEL.deviceId} shell getprop ro.build.version.release") } returns ADB_ANDROID_VERSION_PIXEL.output
+        val adb = Adb(commandRunner)
+        val result = adb.androidVersionFor(ADB_PIXEL.deviceId)
+        assertThat(result).isEqualTo(ADB_PIXEL.androidVersion)
+        verify { commandRunner.exec("adb -s ${ADB_PIXEL.deviceId} shell getprop ro.build.version.release") }
     }
 
     @Test

@@ -6,8 +6,7 @@ import org.andcoe.adf.devices.DeviceId
 import org.andcoe.adf.devices.DeviceService
 import org.junit.Test
 import util.AdbOutput
-import util.AdbOutput.ADB_TCP_IP
-import util.AdbOutput.ADB_WAIT_FOR_DEVICE
+import util.AdbOutput.*
 import util.DeviceUtils.Companion.ADB_PIXEL
 import util.DeviceUtils.Companion.ADB_SAMSUNG
 import util.DeviceUtils.Companion.DEVICE_PIXEL
@@ -45,8 +44,10 @@ class AdbMonitorTest {
         mockAdbCommandsForDevice(
             deviceId = DEVICE_PIXEL.deviceId,
             tcpIpPort = 7777,
-            adbModelResponse = AdbOutput.ADB_DEVICE_MODEL_PIXEL,
-            adbManufacturerResponse = AdbOutput.ADB_DEVICE_MANUFACTURER_GOOGLE
+            adbModelResponse = ADB_DEVICE_MODEL_PIXEL,
+            adbManufacturerResponse = ADB_DEVICE_MANUFACTURER_GOOGLE,
+            adbAndroidVersionResponse = ADB_ANDROID_VERSION_PIXEL,
+            adbApiLevelResponse = ADB_API_LEVEL_PIXEL
         )
         every { deviceService.devices() } returns emptyMap()
         every { deviceService.create(ADB_PIXEL) } returns DEVICE_PIXEL
@@ -63,14 +64,18 @@ class AdbMonitorTest {
         mockAdbCommandsForDevice(
             deviceId = DEVICE_PIXEL.deviceId,
             tcpIpPort = 7777,
-            adbModelResponse = AdbOutput.ADB_DEVICE_MODEL_PIXEL,
-            adbManufacturerResponse = AdbOutput.ADB_DEVICE_MANUFACTURER_GOOGLE
+            adbModelResponse = ADB_DEVICE_MODEL_PIXEL,
+            adbManufacturerResponse = ADB_DEVICE_MANUFACTURER_GOOGLE,
+            adbAndroidVersionResponse = ADB_ANDROID_VERSION_PIXEL,
+            adbApiLevelResponse = ADB_API_LEVEL_PIXEL
         )
         mockAdbCommandsForDevice(
             deviceId = DEVICE_SAMSUNG.deviceId,
             tcpIpPort = 7778,
-            adbModelResponse = AdbOutput.ADB_DEVICE_MODEL_S9,
-            adbManufacturerResponse = AdbOutput.ADB_DEVICE_MANUFACTURER_SAMSUNG
+            adbModelResponse = ADB_DEVICE_MODEL_S9,
+            adbManufacturerResponse = ADB_DEVICE_MANUFACTURER_SAMSUNG,
+            adbAndroidVersionResponse = ADB_ANDROID_VERSION_S9,
+            adbApiLevelResponse = ADB_API_LEVEL_S9
         )
         every { deviceService.devices() } returns emptyMap()
         every { deviceService.create(ADB_PIXEL) } returns DEVICE_PIXEL
@@ -92,6 +97,8 @@ class AdbMonitorTest {
                 DEVICE_PIXEL.deviceId,
                 DEVICE_PIXEL.model,
                 DEVICE_PIXEL.manufacturer,
+                DEVICE_PIXEL.androidVersion,
+                DEVICE_PIXEL.apiLevel,
                 DEVICE_PIXEL.port
             )
         )
@@ -121,7 +128,9 @@ class AdbMonitorTest {
         deviceId: DeviceId,
         tcpIpPort: Int,
         adbModelResponse: AdbOutput,
-        adbManufacturerResponse: AdbOutput
+        adbManufacturerResponse: AdbOutput,
+        adbAndroidVersionResponse: AdbOutput,
+        adbApiLevelResponse: AdbOutput
     ) {
         every { commandRunner.exec("adb -s ${deviceId.id} tcpip 5555") } returns ADB_TCP_IP.output
         every { commandRunner.exec("adb -s ${deviceId.id} wait-for-device") } returns ADB_WAIT_FOR_DEVICE.output
@@ -129,6 +138,8 @@ class AdbMonitorTest {
         every { commandRunner.exec("adb -s ${deviceId.id} connect 127.0.0.1:$tcpIpPort") } returns AdbOutput.ADB_CONNECT_SUCCESS.output
         every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.model") } returns adbModelResponse.output
         every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.manufacturer") } returns adbManufacturerResponse.output
+        every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.build.version.release") } returns adbAndroidVersionResponse.output
+        every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.build.version.sdk") } returns adbApiLevelResponse.output
     }
 
     private fun verifyAdbCommandsForDevice(deviceId: DeviceId, tcpIpPort: Int) {
@@ -138,5 +149,7 @@ class AdbMonitorTest {
         verify { commandRunner.exec("adb -s ${deviceId.id} connect 127.0.0.1:$tcpIpPort") }
         verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.model") }
         verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.manufacturer") }
+        verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.build.version.release") }
+        verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.build.version.sdk") }
     }
 }

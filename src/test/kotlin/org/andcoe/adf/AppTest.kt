@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import util.DeviceUtils.Companion.resourceReturningDevices
 import util.DeviceUtils.Companion.resourceReturningEmptyDevices
+import util.JsonAssertion.Companion.assertThatJson
 
 class AppTest {
 
@@ -26,9 +27,31 @@ class AppTest {
         withTestApplication(AppModule(resourceReturningDevices()).module()) {
             with(handleRequest(HttpMethod.Get, "/devices")) {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
-                assertThat(response.content).isEqualTo(
-                    """[{"deviceId":{"id":"PIXEL"},"model":"Pixel","manufacturer":"Google","port":"7777"},{"deviceId":{"id":"SAMSUNG"},"model":"S9","manufacturer":"Samsung","port":"7778"}]"""
-                )
+                assertThatJson(response.content!!)
+                    .isEqualTo(
+                        """[
+                            {
+                                "deviceId": {
+                                    "id": "PIXEL"
+                                },
+                                "model": "Pixel",
+                                "manufacturer": "Google",
+                                "androidVersion": "9.0",
+                                "apiLevel": "28",
+                                "port": "7777"
+                                },
+                            {
+                                "deviceId": {
+                                    "id": "SAMSUNG"
+                                },
+                                "model": "S9",
+                                "manufacturer": "Samsung",
+                                "androidVersion": "8.1",
+                                "apiLevel": "27",
+                                "port": "7778"
+                            }
+                        ]"""
+                    )
             }
         }
     }
@@ -38,7 +61,19 @@ class AppTest {
         withTestApplication(AppModule(resourceReturningDevices()).module()) {
             with(handleRequest(HttpMethod.Get, "/devices/PIXEL")) {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
-                assertThat(response.content).isEqualTo("""{"deviceId":{"id":"PIXEL"},"model":"Pixel","manufacturer":"Google","port":"7777"}""")
+                assertThatJson(response.content!!)
+                    .isEqualTo(
+                        """{
+                            "deviceId": {
+                                "id": "PIXEL"
+                            },
+                            "model": "Pixel",
+                            "manufacturer": "Google",
+                            "androidVersion": "9.0",
+                            "apiLevel": "28",
+                            "port": "7777"
+                      }"""
+                    )
             }
         }
     }

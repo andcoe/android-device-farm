@@ -62,9 +62,11 @@ class AdbMonitor(
         adb.forwardFor(deviceId, localPort, DEVICE_PORT)
         adb.connect(deviceId, localPort)
 
-        val model = adb.deviceModelFor(deviceId)
-        val manufacturer = adb.deviceManufacturerFor(deviceId)
-        return AdbDevice(deviceId, model, manufacturer, localPort.toString())
+        val model = adb.modelFor(deviceId)
+        val manufacturer = adb.manufacturerFor(deviceId)
+        val androidVersion = adb.androidVersionFor(deviceId)
+        val apiLevel = adb.apiLevelFor(deviceId)
+        return AdbDevice(deviceId, model, manufacturer, androidVersion, apiLevel, localPort.toString())
     }
 
 }
