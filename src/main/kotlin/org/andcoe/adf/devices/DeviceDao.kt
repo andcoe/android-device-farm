@@ -2,15 +2,15 @@ package org.andcoe.adf.devices
 
 class DeviceDao {
 
-    private val devicesDb = mutableListOf<Device>()
+    private val devicesDb = mutableMapOf<DeviceId, Device>()
 
-    fun devices(): List<Device> {
+    fun devices(): Map<DeviceId, Device> {
         return devicesDb
     }
 
-    fun create(deviceId: String): Device {
+    fun create(deviceId: DeviceId): Device {
         val device = Device(deviceId)
-        devicesDb.add(device)
+        devicesDb[deviceId] = device
         return device
     }
 }

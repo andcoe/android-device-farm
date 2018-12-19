@@ -2,11 +2,11 @@ package org.andcoe.adf.devices
 
 class DeviceService(private val deviceDao: DeviceDao) {
 
-    fun devices(): List<Device> {
+    fun devices(): Map<DeviceId, Device> {
         return deviceDao.devices()
     }
 
-    fun createDevice(deviceId: String): Device {
+    fun createDevice(deviceId: DeviceId): Device {
         return deviceDao.create(deviceId)
     }
 }

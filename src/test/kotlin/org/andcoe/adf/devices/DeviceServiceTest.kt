@@ -5,26 +5,38 @@ import org.junit.Test
 
 class DeviceServiceTest {
 
-    @Test fun returnsEmptyWhenNoDevices() {
+    @Test
+    fun returnsEmptyWhenNoDevices() {
         val deviceDao = DeviceDao()
         val deviceService = DeviceService(deviceDao)
-        assertThat(deviceService.devices()).isEqualTo(emptyList<Device>())
+        assertThat(deviceService.devices()).isEqualTo(emptyMap<DeviceId, Device>())
     }
 
-    @Test fun returnsDevices() {
+    @Test
+    fun returnsDevices() {
         val deviceDao = DeviceDao()
-        deviceDao.create("123")
-        deviceDao.create("456")
+        deviceDao.create(DeviceId("123"))
+        deviceDao.create(DeviceId("456"))
         val deviceService = DeviceService(deviceDao)
-        assertThat(deviceService.devices()).isEqualTo(listOf(Device("123"), Device("456")))
+        assertThat(deviceService.devices()).isEqualTo(
+            mapOf(
+                DeviceId("123") to Device(DeviceId("123")),
+                DeviceId("456") to Device(DeviceId("456"))
+            )
+        )
     }
 
-    @Test fun createsDevice() {
+    @Test
+    fun createsDevice() {
         val deviceDao = DeviceDao()
         val deviceService = DeviceService(deviceDao)
-        val newDevice = deviceService.createDevice("123")
-        assertThat(deviceService.devices()).isEqualTo(listOf(Device("123")))
-        assertThat(newDevice).isEqualTo(Device("123"))
+        val newDevice = deviceService.createDevice(DeviceId("123"))
+        assertThat(deviceService.devices()).isEqualTo(
+            mapOf(
+                DeviceId("123") to Device(DeviceId("123"))
+            )
+        )
+        assertThat(newDevice).isEqualTo(Device(DeviceId("123")))
     }
 
 }

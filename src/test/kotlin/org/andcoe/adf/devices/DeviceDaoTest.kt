@@ -8,14 +8,14 @@ class DeviceDaoTest {
     @Test
     fun returnsEmptyWhenNoDevices() {
         val deviceDao = DeviceDao()
-        assertThat(deviceDao.devices()).isEqualTo(emptyList<Device>())
+        assertThat(deviceDao.devices()).isEqualTo(emptyMap<DeviceId, Device>())
     }
 
     @Test
     fun createsDevice() {
         val deviceDao = DeviceDao()
-        val newDevice = deviceDao.create("123")
-        assertThat(deviceDao.devices()).isEqualTo(listOf(Device("123")))
-        assertThat(newDevice).isEqualTo(Device("123"))
+        val newDevice = deviceDao.create(DeviceId("123"))
+        assertThat(deviceDao.devices()).isEqualTo(mapOf(DeviceId("123") to Device(DeviceId("123"))))
+        assertThat(newDevice).isEqualTo(Device(DeviceId("123")))
     }
 }
