@@ -35,14 +35,24 @@ List of devices attached
 
 """
     ),
-    ADB_DEVICE_MODEL(
+    ADB_DEVICE_MODEL_PIXEL(
         """
-    Aquaris X5 Plus
+    Pixel
 """
     ),
-    ADB_DEVICE_MANUFACTURER(
+    ADB_DEVICE_MANUFACTURER_GOOGLE(
         """
-    bq
+    Google
+"""
+    ),
+    ADB_DEVICE_MODEL_S9(
+        """
+    S9
+"""
+    ),
+    ADB_DEVICE_MANUFACTURER_SAMSUNG(
+        """
+    Samsung
 """
     )
 

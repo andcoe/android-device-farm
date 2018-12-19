@@ -6,8 +6,8 @@ import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import util.DeviceResourceUtils.Companion.resourceReturningDevices
-import util.DeviceResourceUtils.Companion.resourceReturningEmptyDevices
+import util.DeviceUtils.Companion.resourceReturningDevices
+import util.DeviceUtils.Companion.resourceReturningEmptyDevices
 
 class AppTest {
 
@@ -26,7 +26,9 @@ class AppTest {
         withTestApplication(AppModule(resourceReturningDevices()).module()) {
             with(handleRequest(HttpMethod.Get, "/devices")) {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
-                assertThat(response.content).isEqualTo("""[{"deviceId":{"id":"PIXEL"}},{"deviceId":{"id":"SAMSUNG"}}]""")
+                assertThat(response.content).isEqualTo(
+                    """[{"deviceId":{"id":"PIXEL"},"model":"Pixel","manufacturer":"Google","port":"7777"},{"deviceId":{"id":"SAMSUNG"},"model":"S9","manufacturer":"Samsung","port":"7778"}]"""
+                )
             }
         }
     }
@@ -36,7 +38,7 @@ class AppTest {
         withTestApplication(AppModule(resourceReturningDevices()).module()) {
             with(handleRequest(HttpMethod.Get, "/devices/PIXEL")) {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
-                assertThat(response.content).isEqualTo("""{"deviceId":{"id":"PIXEL"}}""")
+                assertThat(response.content).isEqualTo("""{"deviceId":{"id":"PIXEL"},"model":"Pixel","manufacturer":"Google","port":"7777"}""")
             }
         }
     }

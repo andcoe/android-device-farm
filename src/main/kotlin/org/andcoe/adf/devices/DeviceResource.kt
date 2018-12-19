@@ -8,9 +8,8 @@ class DeviceResource(private val deviceService: DeviceService) {
 
     fun devices(deviceId: String): Device {
         val device: Device? = deviceService.devices(DeviceId(deviceId))
-        if (device != null) {
-            return device
-        }
+
+        if (device != null) return device
 
         throw ResourceNotFound("Device with id: '$deviceId' not found.")
     }

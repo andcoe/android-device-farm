@@ -2,6 +2,10 @@ package org.andcoe.adf.devices
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import util.DeviceUtils.Companion.ADB_PIXEL
+import util.DeviceUtils.Companion.ADB_SAMSUNG
+import util.DeviceUtils.Companion.DEVICE_PIXEL
+import util.DeviceUtils.Companion.DEVICE_SAMSUNG
 
 class DeviceServiceTest {
 
@@ -14,13 +18,13 @@ class DeviceServiceTest {
     @Test
     fun returnsDevices() {
         val deviceDao = DeviceDao()
-        deviceDao.create(DeviceId("123"))
-        deviceDao.create(DeviceId("456"))
+        deviceDao.create(ADB_PIXEL)
+        deviceDao.create(ADB_SAMSUNG)
         val deviceService = DeviceService(deviceDao)
         assertThat(deviceService.devices()).isEqualTo(
             mapOf(
-                DeviceId("123") to Device(DeviceId("123")),
-                DeviceId("456") to Device(DeviceId("456"))
+                DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
+                DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
             )
         )
     }
@@ -28,31 +32,31 @@ class DeviceServiceTest {
     @Test
     fun returnsDevicesById() {
         val deviceDao = DeviceDao()
-        deviceDao.create(DeviceId("123"))
-        deviceDao.create(DeviceId("456"))
+        deviceDao.create(ADB_PIXEL)
+        deviceDao.create(ADB_SAMSUNG)
         val deviceService = DeviceService(deviceDao)
-        assertThat(deviceService.devices(DeviceId("123"))).isEqualTo(Device(DeviceId("123")))
+        assertThat(deviceService.devices(DEVICE_PIXEL.deviceId)).isEqualTo(DEVICE_PIXEL)
     }
 
     @Test
     fun createsDevice() {
         val deviceService = DeviceService(DeviceDao())
-        val newDevice = deviceService.create(DeviceId("123"))
+        val newDevice = deviceService.create(ADB_PIXEL)
         assertThat(deviceService.devices()).isEqualTo(
-            mapOf(DeviceId("123") to Device(DeviceId("123")))
+            mapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
         )
-        assertThat(newDevice).isEqualTo(Device(DeviceId("123")))
+        assertThat(newDevice).isEqualTo(DEVICE_PIXEL)
     }
 
     @Test
     fun removesDevice() {
         val deviceDao = DeviceDao()
-        deviceDao.create(DeviceId("123"))
-        deviceDao.create(DeviceId("456"))
+        deviceDao.create(ADB_PIXEL)
+        deviceDao.create(ADB_SAMSUNG)
         val deviceService = DeviceService(deviceDao)
-        deviceService.remove(DeviceId("123"))
+        deviceService.remove(DEVICE_PIXEL.deviceId)
         assertThat(deviceService.devices()).isEqualTo(
-            mapOf(DeviceId("456") to Device(DeviceId("456")))
+            mapOf(DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG)
         )
     }
 

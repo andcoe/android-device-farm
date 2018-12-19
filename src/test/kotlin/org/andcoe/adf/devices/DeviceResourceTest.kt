@@ -4,8 +4,10 @@ import org.andcoe.adf.exceptions.ResourceNotFound
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
-import util.DeviceResourceUtils.Companion.resourceReturningDevices
-import util.DeviceResourceUtils.Companion.resourceReturningEmptyDevices
+import util.DeviceUtils.Companion.DEVICE_PIXEL
+import util.DeviceUtils.Companion.DEVICE_SAMSUNG
+import util.DeviceUtils.Companion.resourceReturningDevices
+import util.DeviceUtils.Companion.resourceReturningEmptyDevices
 
 class DeviceResourceTest {
 
@@ -20,8 +22,8 @@ class DeviceResourceTest {
         val deviceResource = resourceReturningDevices()
         assertThat(deviceResource.devices()).isEqualTo(
             listOf(
-                Device(DeviceId("PIXEL")),
-                Device(DeviceId("SAMSUNG"))
+                DEVICE_PIXEL,
+                DEVICE_SAMSUNG
             )
         )
     }
@@ -29,7 +31,7 @@ class DeviceResourceTest {
     @Test
     fun returnsDeviceById() {
         val deviceResource = resourceReturningDevices()
-        assertThat(deviceResource.devices("PIXEL")).isEqualTo(Device(DeviceId("PIXEL")))
+        assertThat(deviceResource.devices(DEVICE_PIXEL.deviceId.id)).isEqualTo(DEVICE_PIXEL)
     }
 
     @Test

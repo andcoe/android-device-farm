@@ -49,20 +49,22 @@ class AdbMonitor(
         println("AdbMonitor => connected now: $newDevices")
 
         newDevices.forEach {
-            setupDevice(it.id)
-            deviceService.create(it)
+            val adbDevice = setupDevice(it.id)
+            deviceService.create(adbDevice)
         }
 
         println("AdbMonitor => prepared devices: ${deviceService.devices().map { it.key }}")
     }
 
-    private fun setupDevice(deviceId: String) {
+    private fun setupDevice(deviceId: String): AdbDevice {
         val localPort = localPortCounter++
         adb.tcpIpFor(deviceId)
         adb.forwardFor(deviceId, localPort, DEVICE_PORT)
         adb.connect(deviceId, localPort)
-        adb.deviceModelFor(deviceId)
-        adb.deviceManufacturerFor(deviceId)
+
+        val model = adb.deviceModelFor(deviceId)
+        val manufacturer = adb.deviceManufacturerFor(deviceId)
+        return AdbDevice(deviceId, model, manufacturer, localPort.toString())
     }
 
 }
