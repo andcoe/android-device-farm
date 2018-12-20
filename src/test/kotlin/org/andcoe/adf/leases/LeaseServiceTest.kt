@@ -6,7 +6,9 @@ import org.andcoe.adf.devices.DeviceId
 import org.andcoe.adf.devices.DeviceService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import util.DeviceUtils
 import util.DeviceUtils.Companion.DEVICE_PIXEL
+import java.util.*
 
 class LeaseServiceTest {
 
@@ -36,6 +38,26 @@ class LeaseServiceTest {
         val deviceService = DeviceService(deviceDao)
 
         val leasesDb = mutableMapOf<LeaseId, Lease>()
+        val leaseDao = LeaseDao(leasesDb)
+        val leaseService = LeaseService(deviceService, leaseDao)
+
+        val lease = leaseService.create()
+        assertThat(lease).isNull()
+    }
+
+    @Test
+    fun returnsNoValueWhenAllDevicesAreAlreadyLeased() {
+        val devicesDb = mutableMapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
+        val deviceDao = DeviceDao(devicesDb)
+        val deviceService = DeviceService(deviceDao)
+
+        val leaseId1 = LeaseId(UUID.randomUUID().toString())
+        val leaseId2 = LeaseId(UUID.randomUUID().toString())
+
+        val leasesDb = mutableMapOf(
+            leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
+            leaseId2 to Lease(leaseId = leaseId2, device = DeviceUtils.DEVICE_SAMSUNG)
+        )
         val leaseDao = LeaseDao(leasesDb)
         val leaseService = LeaseService(deviceService, leaseDao)
 

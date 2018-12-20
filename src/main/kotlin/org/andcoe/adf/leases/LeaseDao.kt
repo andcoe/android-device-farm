@@ -11,4 +11,6 @@ class LeaseDao(private val leasesDb: MutableMap<LeaseId, Lease> = mutableMapOf()
         leasesDb[leaseId] = lease
         return lease
     }
+
+    fun leases(): Map<LeaseId, Lease> = leasesDb
 }
