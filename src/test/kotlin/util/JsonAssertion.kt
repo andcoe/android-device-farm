@@ -42,7 +42,8 @@ class JsonAssertion(private val actual: String) {
 
     companion object {
 
-        fun assertThatJson(actualJson: String): JsonAssertion {
+        fun assertThatJson(actualJson: String?): JsonAssertion {
+            if (actualJson == null) throw AssertionError("actualJson must not be null")
             return JsonAssertion(actualJson)
         }
 

@@ -1,7 +1,8 @@
 package util
 
 import org.andcoe.adf.core.AdbDevice
-import org.andcoe.adf.devices.*
+import org.andcoe.adf.devices.Device
+import org.andcoe.adf.devices.DeviceId
 
 class DeviceUtils {
 
@@ -38,15 +39,5 @@ class DeviceUtils {
             apiLevel = DEVICE_SAMSUNG.apiLevel,
             port = DEVICE_SAMSUNG.port
         )
-
-        fun resourceReturningEmptyDevices() = DeviceResource(DeviceService(DeviceDao(mutableMapOf())))
-        fun resourceReturningDevices() = DeviceResource(DeviceService(DeviceDao(devices())))
-
-        private fun devices(): MutableMap<DeviceId, Device> {
-            return mutableMapOf(
-                DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
-                DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
-            )
-        }
     }
 }
