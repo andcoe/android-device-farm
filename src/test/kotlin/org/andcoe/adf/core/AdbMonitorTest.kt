@@ -23,14 +23,14 @@ class AdbMonitorTest {
 
     @Test
     fun restartsAdbAndRunsCommands() {
-        every { commandRunner.exec("adb kill-server") } returns AdbOutput.ADB_KILL_SERVER.output
-        every { commandRunner.exec("adb start-server") } returns AdbOutput.ADB_START_SERVER.output
+        commandRunner.mockRestartAdb()
 
         adbMonitor.restartAdb()
 
-        verify { commandRunner.exec("adb start-server") }
-        verify { commandRunner.exec("adb kill-server") }
+        commandRunner.verifyRestartAdb()
     }
+
+
 
     @Test
     fun handlesNoDevices() {
@@ -41,7 +41,7 @@ class AdbMonitorTest {
 
     @Test
     fun handlesNewDeviceConnected() {
-        mockAdbCommandsForDevice(
+        commandRunner.mockAdbCommandsForDevice(
             deviceId = DEVICE_PIXEL.deviceId,
             tcpIpPort = 7777,
             adbModelResponse = ADB_DEVICE_MODEL_PIXEL,
@@ -56,12 +56,12 @@ class AdbMonitorTest {
 
         verify { deviceService.devices() }
         verify(exactly = 1) { deviceService.create(ADB_PIXEL) }
-        verifyAdbCommandsForDevice(deviceId = DEVICE_PIXEL.deviceId, tcpIpPort = 7777)
+        commandRunner.verifyAdbCommandsForDevice(deviceId = DEVICE_PIXEL.deviceId, tcpIpPort = 7777)
     }
 
     @Test
     fun handlesMultipleNewDevicesConnected() {
-        mockAdbCommandsForDevice(
+        commandRunner.mockAdbCommandsForDevice(
             deviceId = DEVICE_PIXEL.deviceId,
             tcpIpPort = 7777,
             adbModelResponse = ADB_DEVICE_MODEL_PIXEL,
@@ -69,7 +69,7 @@ class AdbMonitorTest {
             adbAndroidVersionResponse = ADB_ANDROID_VERSION_PIXEL,
             adbApiLevelResponse = ADB_API_LEVEL_PIXEL
         )
-        mockAdbCommandsForDevice(
+        commandRunner.mockAdbCommandsForDevice(
             deviceId = DEVICE_SAMSUNG.deviceId,
             tcpIpPort = 7778,
             adbModelResponse = ADB_DEVICE_MODEL_S9,
@@ -86,8 +86,8 @@ class AdbMonitorTest {
         verify { deviceService.devices() }
         verify(exactly = 1) { deviceService.create(ADB_PIXEL) }
         verify(exactly = 1) { deviceService.create(ADB_SAMSUNG) }
-        verifyAdbCommandsForDevice(deviceId = DEVICE_PIXEL.deviceId, tcpIpPort = 7777)
-        verifyAdbCommandsForDevice(deviceId = DEVICE_SAMSUNG.deviceId, tcpIpPort = 7778)
+        commandRunner.verifyAdbCommandsForDevice(deviceId = DEVICE_PIXEL.deviceId, tcpIpPort = 7777)
+        commandRunner.verifyAdbCommandsForDevice(deviceId = DEVICE_SAMSUNG.deviceId, tcpIpPort = 7778)
     }
 
     @Test
@@ -124,32 +124,49 @@ class AdbMonitorTest {
         verify { deviceService.remove(DEVICE_PIXEL.deviceId) }
     }
 
-    private fun mockAdbCommandsForDevice(
-        deviceId: DeviceId,
-        tcpIpPort: Int,
-        adbModelResponse: AdbOutput,
-        adbManufacturerResponse: AdbOutput,
-        adbAndroidVersionResponse: AdbOutput,
-        adbApiLevelResponse: AdbOutput
-    ) {
-        every { commandRunner.exec("adb -s ${deviceId.id} tcpip 5555") } returns ADB_TCP_IP.output
-        every { commandRunner.exec("adb -s ${deviceId.id} wait-for-device") } returns ADB_WAIT_FOR_DEVICE.output
-        every { commandRunner.exec("adb -s ${deviceId.id} forward tcp:$tcpIpPort tcp:5555") } returns AdbOutput.ADB_FORWARD_IP.output
-        every { commandRunner.exec("adb -s ${deviceId.id} connect 127.0.0.1:$tcpIpPort") } returns AdbOutput.ADB_CONNECT_SUCCESS.output
-        every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.model") } returns adbModelResponse.output
-        every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.manufacturer") } returns adbManufacturerResponse.output
-        every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.build.version.release") } returns adbAndroidVersionResponse.output
-        every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.build.version.sdk") } returns adbApiLevelResponse.output
-    }
 
-    private fun verifyAdbCommandsForDevice(deviceId: DeviceId, tcpIpPort: Int) {
-        verify { commandRunner.exec("adb -s ${deviceId.id} tcpip 5555") }
-        verify { commandRunner.exec("adb -s ${deviceId.id} wait-for-device") }
-        verify { commandRunner.exec("adb -s ${deviceId.id} forward tcp:$tcpIpPort tcp:5555") }
-        verify { commandRunner.exec("adb -s ${deviceId.id} connect 127.0.0.1:$tcpIpPort") }
-        verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.model") }
-        verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.manufacturer") }
-        verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.build.version.release") }
-        verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.build.version.sdk") }
-    }
+}
+
+
+fun CommandRunner.mockRestartAdb() {
+    val commandRunner = this
+    every { commandRunner.exec("adb kill-server") } returns ADB_KILL_SERVER.output
+    every { commandRunner.exec("adb start-server") } returns ADB_START_SERVER.output
+}
+
+fun CommandRunner.verifyRestartAdb() {
+    val commandRunner = this
+    verify { commandRunner.exec("adb start-server") }
+    verify { commandRunner.exec("adb kill-server") }
+}
+
+fun CommandRunner.mockAdbCommandsForDevice(
+    deviceId: DeviceId,
+    tcpIpPort: Int,
+    adbModelResponse: AdbOutput,
+    adbManufacturerResponse: AdbOutput,
+    adbAndroidVersionResponse: AdbOutput,
+    adbApiLevelResponse: AdbOutput
+) {
+    val commandRunner = this
+    every { commandRunner.exec("adb -s ${deviceId.id} tcpip 5555") } returns ADB_TCP_IP.output
+    every { commandRunner.exec("adb -s ${deviceId.id} wait-for-device") } returns ADB_WAIT_FOR_DEVICE.output
+    every { commandRunner.exec("adb -s ${deviceId.id} forward tcp:$tcpIpPort tcp:5555") } returns AdbOutput.ADB_FORWARD_IP.output
+    every { commandRunner.exec("adb -s ${deviceId.id} connect 127.0.0.1:$tcpIpPort") } returns AdbOutput.ADB_CONNECT_SUCCESS.output
+    every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.model") } returns adbModelResponse.output
+    every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.manufacturer") } returns adbManufacturerResponse.output
+    every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.build.version.release") } returns adbAndroidVersionResponse.output
+    every { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.build.version.sdk") } returns adbApiLevelResponse.output
+}
+
+fun CommandRunner.verifyAdbCommandsForDevice(deviceId: DeviceId, tcpIpPort: Int) {
+    val commandRunner = this
+    verify { commandRunner.exec("adb -s ${deviceId.id} tcpip 5555") }
+    verify { commandRunner.exec("adb -s ${deviceId.id} wait-for-device") }
+    verify { commandRunner.exec("adb -s ${deviceId.id} forward tcp:$tcpIpPort tcp:5555") }
+    verify { commandRunner.exec("adb -s ${deviceId.id} connect 127.0.0.1:$tcpIpPort") }
+    verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.model") }
+    verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.product.manufacturer") }
+    verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.build.version.release") }
+    verify { commandRunner.exec("adb -s ${deviceId.id} shell getprop ro.build.version.sdk") }
 }

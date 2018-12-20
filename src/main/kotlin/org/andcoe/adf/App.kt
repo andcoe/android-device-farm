@@ -13,7 +13,10 @@ import org.andcoe.adf.leases.LeaseService
 import org.andcoe.adf.leases.LeasesResource
 import java.util.concurrent.Executors
 
-fun main(args: Array<String>) {
+//Aliased main function used to start the app and fake commands run on terminal
+fun main(args: Array<String>) = main(args, CommandRunner())
+
+fun main(args: Array<String>, commandRunner: CommandRunner ) {
     val deviceDao = DeviceDao()
     val deviceService = DeviceService(deviceDao)
     val deviceResource = DeviceResource(deviceService)
@@ -22,7 +25,6 @@ fun main(args: Array<String>) {
     val leaseService = LeaseService(deviceService, leaseDao)
     val leasesResource = LeasesResource(leaseService)
 
-    val commandRunner = CommandRunner()
     val adb = Adb(commandRunner)
     val adbMonitor = AdbMonitor(deviceService, adb)
     Executors.newSingleThreadExecutor().execute { adbMonitor.startScanning() }

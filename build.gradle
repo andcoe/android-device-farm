@@ -34,6 +34,7 @@ dependencies {
 
     //Client deps
     compile "com.xenomachina:kotlin-argparser:$kotlin_argparser_version"
+    compile "io.ktor:ktor-client-core:$ktor_version"
 
     //Server deps
     compile "io.ktor:ktor-server-netty:$ktor_version"
