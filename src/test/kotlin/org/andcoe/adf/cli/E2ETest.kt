@@ -2,6 +2,8 @@ package org.andcoe.adf.cli
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
+import io.ktor.client.features.json.JacksonSerializer
+import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.get
 import io.mockk.every
 import io.mockk.mockk
@@ -14,6 +16,7 @@ import org.andcoe.adf.core.mockAdbCommandsForDevice
 import org.junit.Test
 import util.AdbOutput
 import org.andcoe.adf.core.mockRestartAdb
+import org.andcoe.adf.devices.Device
 import util.DeviceUtils
 import java.net.ConnectException
 
@@ -45,7 +48,11 @@ class E2ETest {
         val application = GlobalScope.async {org.andcoe.adf.main(emptyArray(), commandRunner) }
 
 
-        val client = HttpClient()
+        val client = HttpClient() {
+            install(JsonFeature) {
+                serializer = JacksonSerializer()
+            }
+        }
 
         runBlocking {
             var notConnected = true
@@ -54,7 +61,7 @@ class E2ETest {
                 try {
 
 
-                    val result = client.get<String>("http://0.0.0.0:8000/devices")
+                    val result = client.get<List<Device>>("http://0.0.0.0:8000/devices")
                     println("*******************************************************************")
                     println("*******************************************************************")
                     println("*******************************************************************")
