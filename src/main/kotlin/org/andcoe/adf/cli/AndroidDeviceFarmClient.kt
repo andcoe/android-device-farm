@@ -2,42 +2,97 @@ package org.andcoe.adf.cli
 
 
 import com.xenomachina.argparser.ArgParser
+import com.xenomachina.argparser.InvalidArgumentException
 import com.xenomachina.argparser.default
+import io.ktor.client.HttpClient
+import io.ktor.client.features.json.JacksonSerializer
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.request.get
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import org.andcoe.adf.devices.Device
+import java.io.PrintStream
+import java.net.ConnectException
 
 class MyArgs(parser: ArgParser) {
-    val upper by parser.flagging(
-            "-u", "--upper",
-            help = "enable upper case[p m/'ode")
 
-    val name by parser.storing(
-            "-n", "--name",
-            help = "name of the user")
 
-    val count by parser.storing(
-            "-c", "--count",
-            help = "number of widgets") { toInt() }
-            .default(1)
+    companion object {
+        val  subCommands = listOf("test", "devices", "leases")
+    }
 
-    val device1 by parser.positional(
-            "DEVICE_ONE",
-            help = "source filename")
-            .default<String?>(null)
+    val subCommand by parser.positional(
+        "SUB_COMMAND",
+        help = "subCommand"
+    )
+        .addValidator {
+            if (!subCommands.contains(value))
+                throw InvalidArgumentException(
+                    "sub command must be one of ${subCommands}"
+                )
+        }
 
-    val device2 by parser.positional(
-            "DEVICE_TWO",
-            help = "destination filename")
+//
+//    val upper by parser.flagging(
+//        "-u", "--upper",
+//        help = "enable upper case[p m/'ode"
+//    )
+//
+//    val name by parser.storing(
+//        "-n", "--name",
+//        help = "name of the user"
+//    )
+//
+//    val count by parser.storing(
+//        "-c", "--count",
+//        help = "number of widgets"
+//    ) { toInt() }
+//        .default(1)
+
+
+
+
 }
 
 
-fun main(args: Array<String>) {
-    ArgParser(args).parseInto(::MyArgs).run {
+/**
+ *
+ * farm devices
+ * farm leases
+ * farm test
+ * farm test --device
+ *
+ */
 
-        device1?.let{
-            println("Optional positional: ${device1}!")
+fun main(args: Array<String>) = main(args, System.out)
+fun main(args: Array<String>, out : PrintStream) {
+    ArgParser(args).parseInto(::MyArgs).run {
+        when(subCommand){
+            "devices" -> getDevices(out)
         }
-        println("Hello, ${name}!")
-        println("I'm going to run ${count} tests on ${device1} and ${device2}.")
-        // TODO: move widgets
+    }
+
+}
+
+fun getDevices(out : PrintStream) {
+    val client = HttpClient() {
+        install(JsonFeature) {
+            serializer = JacksonSerializer()
+        }
+    }
+
+    runBlocking {
+        var notConnected = true
+        while(notConnected) {
+            delay(500)
+            try {
+                val result = client.get<List<Device>>("http://0.0.0.0:8000/devices")
+                out.println(result[0].deviceId.id)
+                notConnected = false
+            } catch (e: ConnectException) {
+                println("NOT READY")
+            }
+        }
     }
 
 }

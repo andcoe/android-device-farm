@@ -5,8 +5,7 @@ import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.request.get
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -19,6 +18,9 @@ import org.andcoe.adf.core.mockRestartAdb
 import org.andcoe.adf.devices.Device
 import util.DeviceUtils
 import java.net.ConnectException
+import java.io.PrintStream
+
+
 
 class E2ETest {
 
@@ -48,37 +50,16 @@ class E2ETest {
         val application = GlobalScope.async {org.andcoe.adf.main(emptyArray(), commandRunner) }
 
 
-        val client = HttpClient() {
-            install(JsonFeature) {
-                serializer = JacksonSerializer()
-            }
-        }
-
-        runBlocking {
-            var notConnected = true
-            while(notConnected) {
-                delay(500)
-                try {
+        val out = mockk<PrintStream>()
 
 
-                    val result = client.get<List<Device>>("http://0.0.0.0:8000/devices")
-                    println("*******************************************************************")
-                    println("*******************************************************************")
-                    println("*******************************************************************")
-                    println("*******************************************************************")
-                    println(result)
+        every{out.println(any<String>())} just Runs
 
-                    println("*******************************************************************")
-                    println("*******************************************************************")
-                    println("*******************************************************************")
-                    println("*******************************************************************")
-                    notConnected = false
-                } catch (e: ConnectException) {
-                    println("NOT READY")
+        main("devices".split(" ").toTypedArray(), out)
 
-                }
-            }
-        }
+        verify{out.println("PIXEL")}
+
+
 
         application.cancel()
 
