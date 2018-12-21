@@ -2,7 +2,7 @@
 
 Android device farm is a tool that monitors and manages android devices that are connected to a machine (e.g raspberry pi).
 Clients can acquire a device (lease) from the device farm using the rest api (shown below) and perform various tasks with it, e.g. running Android Espresso tests.
-
+<pre>
 
                                                                                                        +-+
                                                                                                +------^+ | device1
@@ -28,7 +28,7 @@ Clients can acquire a device (lease) from the device farm using the rest api (sh
 | POST   /leases/{deviceId} |   |                 |   |                 |   |                 |    X               X
 | DELETE /leases/{deviceId} |   |                 |   |                 |   |                 |     X             X
 +---------------------------+   +-----------------+   +-----------------+   +-----------------+      XXXXXXXXXXXXX
-
+</pre>
 
 # Other useful stuff
 
