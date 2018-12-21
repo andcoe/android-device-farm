@@ -12,14 +12,14 @@ import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
-import org.andcoe.adf.devices.DeviceResource
+import org.andcoe.adf.devices.DevicesResource
 import org.andcoe.adf.exceptions.DeviceNotFound
 import org.andcoe.adf.exceptions.NoDevicesAvailableToLease
 import org.andcoe.adf.exceptions.ResourceNotFound
 import org.andcoe.adf.leases.LeasesResource
 
 class AppModule(
-    private val deviceResource: DeviceResource,
+    private val devicesResource: DevicesResource,
     private val leasesResource: LeasesResource
 ) {
 
@@ -42,11 +42,11 @@ class AppModule(
 
         routing {
             get("/devices") {
-                call.respond(HttpStatusCode.OK, deviceResource.devices())
+                call.respond(HttpStatusCode.OK, devicesResource.devices())
             }
             get("/devices/{deviceId}") {
                 val deviceId: String = call.parameters["deviceId"]!!
-                call.respond(HttpStatusCode.OK, deviceResource.devices(deviceId))
+                call.respond(HttpStatusCode.OK, devicesResource.devices(deviceId))
             }
             get("/leases") {
                 call.respond(HttpStatusCode.OK, leasesResource.leases())

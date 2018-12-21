@@ -1,10 +1,10 @@
 package org.andcoe.adf.core
 
 import org.andcoe.adf.devices.DeviceId
-import org.andcoe.adf.devices.DeviceService
+import org.andcoe.adf.devices.DevicesService
 
 class AdbMonitor(
-    private val deviceService: DeviceService,
+    private val devicesService: DevicesService,
     private val adb: Adb
 ) {
 
@@ -36,24 +36,24 @@ class AdbMonitor(
     fun refreshDevicesWith(connectedDevices: List<DeviceId>) {
         println("AdbMonitor => connected devices: $connectedDevices")
 
-        val preparedDevices = deviceService.devices()
+        val preparedDevices = devicesService.devices()
 
         val removedDevices: List<DeviceId> = preparedDevices.keys.filter { !connectedDevices.contains(it) }
         println("AdbMonitor => removed now: $removedDevices")
 
         preparedDevices
             .filter { removedDevices.contains(it.key) }
-            .map { deviceService.remove(it.key) }
+            .map { devicesService.remove(it.key) }
 
         val newDevices: List<DeviceId> = connectedDevices.filter { !preparedDevices.containsKey(it) }
         println("AdbMonitor => connected now: $newDevices")
 
         newDevices.forEach {
             val adbDevice = setupDevice(it.id)
-            deviceService.create(adbDevice)
+            devicesService.create(adbDevice)
         }
 
-        println("AdbMonitor => prepared devices: ${deviceService.devices().map { it.key }}")
+        println("AdbMonitor => prepared devices: ${devicesService.devices().map { it.key }}")
     }
 
     private fun setupDevice(deviceId: String): AdbDevice {

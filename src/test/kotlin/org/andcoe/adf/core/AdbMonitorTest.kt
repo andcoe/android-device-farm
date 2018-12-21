@@ -3,7 +3,7 @@ package org.andcoe.adf.core
 import io.mockk.*
 import org.andcoe.adf.devices.Device
 import org.andcoe.adf.devices.DeviceId
-import org.andcoe.adf.devices.DeviceService
+import org.andcoe.adf.devices.DevicesService
 import org.junit.Test
 import util.AdbOutput
 import util.AdbOutput.*
@@ -15,9 +15,9 @@ import util.DeviceUtils.Companion.DEVICE_SAMSUNG
 class AdbMonitorTest {
 
     private val commandRunner: CommandRunner = mockk()
-    private val deviceService: DeviceService = mockk()
+    private val devicesService: DevicesService = mockk()
     private val adbMonitor = AdbMonitor(
-        deviceService = deviceService,
+        devicesService = devicesService,
         adb = Adb(commandRunner)
     )
 
@@ -33,9 +33,9 @@ class AdbMonitorTest {
 
     @Test
     fun handlesNoDevices() {
-        every { deviceService.devices() } returns emptyMap()
+        every { devicesService.devices() } returns emptyMap()
         adbMonitor.refreshDevicesWith(listOf())
-        verify { deviceService.devices() }
+        verify { devicesService.devices() }
     }
 
     @Test
@@ -48,13 +48,13 @@ class AdbMonitorTest {
             adbAndroidVersionResponse = ADB_ANDROID_VERSION_PIXEL,
             adbApiLevelResponse = ADB_API_LEVEL_PIXEL
         )
-        every { deviceService.devices() } returns emptyMap()
-        every { deviceService.create(ADB_PIXEL) } returns DEVICE_PIXEL
+        every { devicesService.devices() } returns emptyMap()
+        every { devicesService.create(ADB_PIXEL) } returns DEVICE_PIXEL
 
         adbMonitor.refreshDevicesWith(listOf(DEVICE_PIXEL.deviceId))
 
-        verify { deviceService.devices() }
-        verify(exactly = 1) { deviceService.create(ADB_PIXEL) }
+        verify { devicesService.devices() }
+        verify(exactly = 1) { devicesService.create(ADB_PIXEL) }
         commandRunner.verifyAdbCommandsForDevice(deviceId = DEVICE_PIXEL.deviceId, tcpIpPort = 7777)
     }
 
@@ -76,22 +76,22 @@ class AdbMonitorTest {
             adbAndroidVersionResponse = ADB_ANDROID_VERSION_S9,
             adbApiLevelResponse = ADB_API_LEVEL_S9
         )
-        every { deviceService.devices() } returns emptyMap()
-        every { deviceService.create(ADB_PIXEL) } returns DEVICE_PIXEL
-        every { deviceService.create(ADB_SAMSUNG) } returns DEVICE_SAMSUNG
+        every { devicesService.devices() } returns emptyMap()
+        every { devicesService.create(ADB_PIXEL) } returns DEVICE_PIXEL
+        every { devicesService.create(ADB_SAMSUNG) } returns DEVICE_SAMSUNG
 
         adbMonitor.refreshDevicesWith(listOf(DEVICE_PIXEL.deviceId, DEVICE_SAMSUNG.deviceId))
 
-        verify { deviceService.devices() }
-        verify(exactly = 1) { deviceService.create(ADB_PIXEL) }
-        verify(exactly = 1) { deviceService.create(ADB_SAMSUNG) }
+        verify { devicesService.devices() }
+        verify(exactly = 1) { devicesService.create(ADB_PIXEL) }
+        verify(exactly = 1) { devicesService.create(ADB_SAMSUNG) }
         commandRunner.verifyAdbCommandsForDevice(deviceId = DEVICE_PIXEL.deviceId, tcpIpPort = 7777)
         commandRunner.verifyAdbCommandsForDevice(deviceId = DEVICE_SAMSUNG.deviceId, tcpIpPort = 7778)
     }
 
     @Test
     fun handlesDeviceRemoved() {
-        every { deviceService.devices() } returns mapOf(
+        every { devicesService.devices() } returns mapOf(
             DEVICE_PIXEL.deviceId to Device(
                 DEVICE_PIXEL.deviceId,
                 DEVICE_PIXEL.model,
@@ -101,26 +101,26 @@ class AdbMonitorTest {
                 DEVICE_PIXEL.port
             )
         )
-        every { deviceService.remove(DEVICE_PIXEL.deviceId) } just Runs
+        every { devicesService.remove(DEVICE_PIXEL.deviceId) } just Runs
 
         adbMonitor.refreshDevicesWith(listOf())
 
-        verify { deviceService.devices() }
-        verify { deviceService.remove(DEVICE_PIXEL.deviceId) }
+        verify { devicesService.devices() }
+        verify { devicesService.remove(DEVICE_PIXEL.deviceId) }
     }
 
     @Test
     fun handlesDeviceRemovedAndKeepsExisting() {
-        every { deviceService.devices() } returns mapOf(
+        every { devicesService.devices() } returns mapOf(
             DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
             DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
-        every { deviceService.remove(DEVICE_PIXEL.deviceId) } just Runs
+        every { devicesService.remove(DEVICE_PIXEL.deviceId) } just Runs
 
         adbMonitor.refreshDevicesWith(listOf(DEVICE_SAMSUNG.deviceId))
 
-        verify { deviceService.devices() }
-        verify { deviceService.remove(DEVICE_PIXEL.deviceId) }
+        verify { devicesService.devices() }
+        verify { devicesService.remove(DEVICE_PIXEL.deviceId) }
     }
 
 

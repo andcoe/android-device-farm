@@ -2,7 +2,7 @@ package org.andcoe.adf.devices
 
 import org.andcoe.adf.core.AdbDevice
 
-class DeviceDao(private val devicesDb: MutableMap<DeviceId, Device> = mutableMapOf()) {
+class DevicesDao(private val devicesDb: MutableMap<DeviceId, Device> = mutableMapOf()) {
 
     fun devices(): Map<DeviceId, Device> = devicesDb
 

@@ -6,12 +6,12 @@ import util.DeviceUtils
 import util.DeviceUtils.Companion.DEVICE_PIXEL
 import java.util.*
 
-class LeaseDaoTest {
+class LeasesDaoTest {
 
     @Test
     fun createsLease() {
         val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeaseDao(leasesDb)
+        val leaseDao = LeasesDao(leasesDb)
 
         val actual = leaseDao.create(DEVICE_PIXEL)
         val expected = Lease(
@@ -24,7 +24,7 @@ class LeaseDaoTest {
     @Test
     fun returnsEmptyLeases() {
         val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeaseDao(leasesDb)
+        val leaseDao = LeasesDao(leasesDb)
         assertThat(leaseDao.leases()).isEqualTo(emptyMap<LeaseId, Lease>())
     }
 
@@ -38,7 +38,7 @@ class LeaseDaoTest {
             leaseId2 to Lease(leaseId = leaseId2, device = DeviceUtils.DEVICE_SAMSUNG)
         )
 
-        val leaseDao = LeaseDao(leasesDb)
+        val leaseDao = LeasesDao(leasesDb)
         assertThat(leaseDao.leases()).isEqualTo(
             mapOf(
                 leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),

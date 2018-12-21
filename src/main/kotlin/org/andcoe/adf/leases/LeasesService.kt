@@ -2,32 +2,32 @@ package org.andcoe.adf.leases
 
 import org.andcoe.adf.devices.Device
 import org.andcoe.adf.devices.DeviceId
-import org.andcoe.adf.devices.DeviceService
+import org.andcoe.adf.devices.DevicesService
 import org.andcoe.adf.exceptions.DeviceNotFound
 
-class LeaseService(
-    private val deviceService: DeviceService,
-    private val leaseDao: LeaseDao
+class LeasesService(
+    private val devicesService: DevicesService,
+    private val leasesDao: LeasesDao
 ) {
 
     fun create(): Lease? {
-        val leases = leaseDao.leases()
-        val devices = deviceService.devices()
+        val leases = leasesDao.leases()
+        val devices = devicesService.devices()
 
         val device: Device? = devices.values
             .find { device -> leases.all { it.value.device.deviceId != device.deviceId } }
 
-        return if (device != null) leaseDao.create(device) else null
+        return if (device != null) leasesDao.create(device) else null
     }
 
     fun create(deviceId: DeviceId): Lease? {
-        val devices = deviceService.devices()
+        val devices = devicesService.devices()
         val device: Device = devices[deviceId] ?: throw DeviceNotFound("No device found with id: '${deviceId.id}'")
 
-        val leases = leaseDao.leases()
+        val leases = leasesDao.leases()
         val leaseNotFound = leases.all { lease -> lease.value.device.deviceId != device.deviceId }
-        return if (leaseNotFound) leaseDao.create(device) else null
+        return if (leaseNotFound) leasesDao.create(device) else null
     }
 
-    fun leases(): Map<LeaseId, Lease> = leaseDao.leases()
+    fun leases(): Map<LeaseId, Lease> = leasesDao.leases()
 }

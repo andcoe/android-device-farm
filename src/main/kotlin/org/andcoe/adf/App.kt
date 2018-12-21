@@ -5,11 +5,11 @@ import io.ktor.server.netty.Netty
 import org.andcoe.adf.core.Adb
 import org.andcoe.adf.core.AdbMonitor
 import org.andcoe.adf.core.CommandRunner
-import org.andcoe.adf.devices.DeviceDao
-import org.andcoe.adf.devices.DeviceResource
-import org.andcoe.adf.devices.DeviceService
-import org.andcoe.adf.leases.LeaseDao
-import org.andcoe.adf.leases.LeaseService
+import org.andcoe.adf.devices.DevicesDao
+import org.andcoe.adf.devices.DevicesResource
+import org.andcoe.adf.devices.DevicesService
+import org.andcoe.adf.leases.LeasesDao
+import org.andcoe.adf.leases.LeasesService
 import org.andcoe.adf.leases.LeasesResource
 import java.util.concurrent.Executors
 
@@ -17,12 +17,12 @@ import java.util.concurrent.Executors
 fun main(args: Array<String>) = main(args, CommandRunner())
 
 fun main(args: Array<String>, commandRunner: CommandRunner) {
-    val deviceDao = DeviceDao()
-    val deviceService = DeviceService(deviceDao)
-    val deviceResource = DeviceResource(deviceService)
+    val deviceDao = DevicesDao()
+    val deviceService = DevicesService(deviceDao)
+    val deviceResource = DevicesResource(deviceService)
 
-    val leaseDao = LeaseDao()
-    val leaseService = LeaseService(deviceService, leaseDao)
+    val leaseDao = LeasesDao()
+    val leaseService = LeasesService(deviceService, leaseDao)
     val leasesResource = LeasesResource(leaseService)
 
     val adb = Adb(commandRunner)
@@ -33,7 +33,7 @@ fun main(args: Array<String>, commandRunner: CommandRunner) {
         factory = Netty,
         port = 8000,
         module = AppModule(
-            deviceResource = deviceResource,
+            devicesResource = deviceResource,
             leasesResource = leasesResource
         ).module()
     ).start(wait = true)

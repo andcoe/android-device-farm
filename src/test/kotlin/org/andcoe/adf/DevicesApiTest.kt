@@ -15,17 +15,17 @@ class DevicesApiTest {
     @Test
     fun returnsEmptyJson() {
         val devicesDb = mutableMapOf<DeviceId, Device>()
-        val deviceDao = DeviceDao(devicesDb)
-        val deviceService = DeviceService(deviceDao)
-        val deviceResource = DeviceResource(deviceService)
+        val deviceDao = DevicesDao(devicesDb)
+        val deviceService = DevicesService(deviceDao)
+        val deviceResource = DevicesResource(deviceService)
 
         val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeaseDao(leasesDb)
-        val leaseService = LeaseService(deviceService, leaseDao)
+        val leaseDao = LeasesDao(leasesDb)
+        val leaseService = LeasesService(deviceService, leaseDao)
         val leasesResource = LeasesResource(leaseService)
 
         val appModule = AppModule(
-            deviceResource = deviceResource,
+            devicesResource = deviceResource,
             leasesResource = leasesResource
         ).module()
 
@@ -43,17 +43,17 @@ class DevicesApiTest {
             DeviceUtils.DEVICE_PIXEL.deviceId to DeviceUtils.DEVICE_PIXEL,
             DeviceUtils.DEVICE_SAMSUNG.deviceId to DeviceUtils.DEVICE_SAMSUNG
         )
-        val deviceDao = DeviceDao(devicesDb)
-        val deviceService = DeviceService(deviceDao)
-        val deviceResource = DeviceResource(deviceService)
+        val deviceDao = DevicesDao(devicesDb)
+        val deviceService = DevicesService(deviceDao)
+        val deviceResource = DevicesResource(deviceService)
 
         val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeaseDao(leasesDb)
-        val leaseService = LeaseService(deviceService, leaseDao)
+        val leaseDao = LeasesDao(leasesDb)
+        val leaseService = LeasesService(deviceService, leaseDao)
         val leasesResource = LeasesResource(leaseService)
 
         val appModule = AppModule(
-            deviceResource = deviceResource,
+            devicesResource = deviceResource,
             leasesResource = leasesResource
         ).module()
 
@@ -95,17 +95,17 @@ class DevicesApiTest {
             DeviceUtils.DEVICE_PIXEL.deviceId to DeviceUtils.DEVICE_PIXEL,
             DeviceUtils.DEVICE_SAMSUNG.deviceId to DeviceUtils.DEVICE_SAMSUNG
         )
-        val deviceDao = DeviceDao(devicesDb)
-        val deviceService = DeviceService(deviceDao)
-        val deviceResource = DeviceResource(deviceService)
+        val deviceDao = DevicesDao(devicesDb)
+        val deviceService = DevicesService(deviceDao)
+        val deviceResource = DevicesResource(deviceService)
 
         val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeaseDao(leasesDb)
-        val leaseService = LeaseService(deviceService, leaseDao)
+        val leaseDao = LeasesDao(leasesDb)
+        val leaseService = LeasesService(deviceService, leaseDao)
         val leasesResource = LeasesResource(leaseService)
 
         val appModule = AppModule(
-            deviceResource = deviceResource,
+            devicesResource = deviceResource,
             leasesResource = leasesResource
         ).module()
 
@@ -135,17 +135,17 @@ class DevicesApiTest {
             DeviceUtils.DEVICE_PIXEL.deviceId to DeviceUtils.DEVICE_PIXEL,
             DeviceUtils.DEVICE_SAMSUNG.deviceId to DeviceUtils.DEVICE_SAMSUNG
         )
-        val deviceDao = DeviceDao(devicesDb)
-        val deviceService = DeviceService(deviceDao)
-        val deviceResource = DeviceResource(deviceService)
+        val deviceDao = DevicesDao(devicesDb)
+        val deviceService = DevicesService(deviceDao)
+        val deviceResource = DevicesResource(deviceService)
 
         val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeaseDao(leasesDb)
-        val leaseService = LeaseService(deviceService, leaseDao)
+        val leaseDao = LeasesDao(leasesDb)
+        val leaseService = LeasesService(deviceService, leaseDao)
         val leasesResource = LeasesResource(leaseService)
 
         val appModule = AppModule(
-            deviceResource = deviceResource,
+            devicesResource = deviceResource,
             leasesResource = leasesResource
         ).module()
 

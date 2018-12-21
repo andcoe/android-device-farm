@@ -2,12 +2,12 @@ package org.andcoe.adf.devices
 
 import org.andcoe.adf.exceptions.ResourceNotFound
 
-class DeviceResource(private val deviceService: DeviceService) {
+class DevicesResource(private val devicesService: DevicesService) {
 
-    fun devices(): List<Device> = deviceService.devices().map { it.value }
+    fun devices(): List<Device> = devicesService.devices().map { it.value }
 
     fun devices(deviceId: String): Device {
-        val device: Device? = deviceService.devices(DeviceId(deviceId))
+        val device: Device? = devicesService.devices(DeviceId(deviceId))
 
         if (device != null) return device
 

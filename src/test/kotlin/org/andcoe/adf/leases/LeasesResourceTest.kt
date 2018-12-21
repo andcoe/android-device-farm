@@ -1,7 +1,7 @@
 package org.andcoe.adf.leases
 
-import org.andcoe.adf.devices.DeviceDao
-import org.andcoe.adf.devices.DeviceService
+import org.andcoe.adf.devices.DevicesDao
+import org.andcoe.adf.devices.DevicesService
 import org.andcoe.adf.exceptions.DeviceNotFound
 import org.andcoe.adf.exceptions.NoDevicesAvailableToLease
 import org.assertj.core.api.Assertions.assertThat
@@ -16,12 +16,12 @@ class LeasesResourceTest {
     @Test
     fun createsLeaseForAnyDevice() {
         val devicesDb = mutableMapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
-        val deviceDao = DeviceDao(devicesDb)
-        val deviceService = DeviceService(deviceDao)
+        val deviceDao = DevicesDao(devicesDb)
+        val deviceService = DevicesService(deviceDao)
 
         val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeaseDao(leasesDb)
-        val leaseService = LeaseService(deviceService, leaseDao)
+        val leaseDao = LeasesDao(leasesDb)
+        val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 
 
@@ -36,12 +36,12 @@ class LeasesResourceTest {
 
     @Test
     fun returnsErrorWhenNoFreeDevicesToLease() {
-        val deviceDao = DeviceDao(devicesDb = mutableMapOf())
-        val deviceService = DeviceService(deviceDao)
+        val deviceDao = DevicesDao(devicesDb = mutableMapOf())
+        val deviceService = DevicesService(deviceDao)
 
         val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeaseDao(leasesDb)
-        val leaseService = LeaseService(deviceService, leaseDao)
+        val leaseDao = LeasesDao(leasesDb)
+        val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 
         assertThatThrownBy { leaseResource.create() }
@@ -54,8 +54,8 @@ class LeasesResourceTest {
             DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
             DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
-        val deviceDao = DeviceDao(devicesDb)
-        val deviceService = DeviceService(deviceDao)
+        val deviceDao = DevicesDao(devicesDb)
+        val deviceService = DevicesService(deviceDao)
 
         val leaseId1 = LeaseId(UUID.randomUUID().toString())
         val leaseId2 = LeaseId(UUID.randomUUID().toString())
@@ -65,8 +65,8 @@ class LeasesResourceTest {
             leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
         )
 
-        val leaseDao = LeaseDao(leasesDb)
-        val leaseService = LeaseService(deviceService, leaseDao)
+        val leaseDao = LeasesDao(leasesDb)
+        val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 
         assertThatThrownBy { leaseResource.create() }
@@ -76,12 +76,12 @@ class LeasesResourceTest {
     @Test
     fun createsLeaseForSpecificDevice() {
         val devicesDb = mutableMapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
-        val deviceDao = DeviceDao(devicesDb)
-        val deviceService = DeviceService(deviceDao)
+        val deviceDao = DevicesDao(devicesDb)
+        val deviceService = DevicesService(deviceDao)
 
         val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeaseDao(leasesDb)
-        val leaseService = LeaseService(deviceService, leaseDao)
+        val leaseDao = LeasesDao(leasesDb)
+        val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 
 
@@ -100,8 +100,8 @@ class LeasesResourceTest {
             DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
             DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
-        val deviceDao = DeviceDao(devicesDb)
-        val deviceService = DeviceService(deviceDao)
+        val deviceDao = DevicesDao(devicesDb)
+        val deviceService = DevicesService(deviceDao)
 
         val leaseId1 = LeaseId(UUID.randomUUID().toString())
         val leaseId2 = LeaseId(UUID.randomUUID().toString())
@@ -111,8 +111,8 @@ class LeasesResourceTest {
             leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
         )
 
-        val leaseDao = LeaseDao(leasesDb)
-        val leaseService = LeaseService(deviceService, leaseDao)
+        val leaseDao = LeasesDao(leasesDb)
+        val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 
         assertThatThrownBy { leaseResource.create(DEVICE_PIXEL.deviceId.id) }
@@ -122,8 +122,8 @@ class LeasesResourceTest {
     @Test
     fun returnsErrorWhenSpecificDeviceIdNotFound() {
         val devicesDb = mutableMapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
-        val deviceDao = DeviceDao(devicesDb)
-        val deviceService = DeviceService(deviceDao)
+        val deviceDao = DevicesDao(devicesDb)
+        val deviceService = DevicesService(deviceDao)
 
         val leaseId1 = LeaseId(UUID.randomUUID().toString())
         val leaseId2 = LeaseId(UUID.randomUUID().toString())
@@ -133,8 +133,8 @@ class LeasesResourceTest {
             leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
         )
 
-        val leaseDao = LeaseDao(leasesDb)
-        val leaseService = LeaseService(deviceService, leaseDao)
+        val leaseDao = LeasesDao(leasesDb)
+        val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 
         assertThatThrownBy { leaseResource.create("some-random-device-id") }
@@ -144,8 +144,8 @@ class LeasesResourceTest {
     @Test
     fun returnsAllLeases() {
         val devicesDb = mutableMapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
-        val deviceDao = DeviceDao(devicesDb)
-        val deviceService = DeviceService(deviceDao)
+        val deviceDao = DevicesDao(devicesDb)
+        val deviceService = DevicesService(deviceDao)
 
         val leaseId1 = LeaseId(UUID.randomUUID().toString())
         val leaseId2 = LeaseId(UUID.randomUUID().toString())
@@ -155,8 +155,8 @@ class LeasesResourceTest {
             leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
         )
 
-        val leaseDao = LeaseDao(leasesDb)
-        val leaseService = LeaseService(deviceService, leaseDao)
+        val leaseDao = LeasesDao(leasesDb)
+        val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 
         assertThat(leaseResource.leases())
