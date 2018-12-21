@@ -16,7 +16,7 @@ import java.util.concurrent.Executors
 //Aliased main function used to start the app and fake commands run on terminal
 fun main(args: Array<String>) = main(args, CommandRunner())
 
-fun main(args: Array<String>, commandRunner: CommandRunner ) {
+fun main(args: Array<String>, commandRunner: CommandRunner) {
     val deviceDao = DeviceDao()
     val deviceService = DeviceService(deviceDao)
     val deviceResource = DeviceResource(deviceService)

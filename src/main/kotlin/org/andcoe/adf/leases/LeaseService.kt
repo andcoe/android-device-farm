@@ -5,8 +5,10 @@ import org.andcoe.adf.devices.DeviceId
 import org.andcoe.adf.devices.DeviceService
 import org.andcoe.adf.exceptions.DeviceNotFound
 
-class LeaseService(private val deviceService: DeviceService,
-                   private val leaseDao: LeaseDao) {
+class LeaseService(
+    private val deviceService: DeviceService,
+    private val leaseDao: LeaseDao
+) {
 
     fun create(): Lease? {
         val leases = leaseDao.leases()
@@ -26,4 +28,6 @@ class LeaseService(private val deviceService: DeviceService,
         val leaseNotFound = leases.all { lease -> lease.value.device.deviceId != device.deviceId }
         return if (leaseNotFound) leaseDao.create(device) else null
     }
+
+    fun leases(): Map<LeaseId, Lease> = leaseDao.leases()
 }

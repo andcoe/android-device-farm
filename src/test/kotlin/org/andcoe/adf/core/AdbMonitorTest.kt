@@ -31,7 +31,6 @@ class AdbMonitorTest {
     }
 
 
-
     @Test
     fun handlesNoDevices() {
         every { deviceService.devices() } returns emptyMap()

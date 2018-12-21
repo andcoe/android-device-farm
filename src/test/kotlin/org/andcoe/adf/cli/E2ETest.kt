@@ -15,7 +15,7 @@ import java.io.PrintStream
 class E2ETest {
 
     @Test
-    fun doStuff() {
+    fun appStartsAndChecksForDevices() {
         val commandRunner = mockk<CommandRunner>()
         commandRunner.mockRestartAdb()
         commandRunner.mockAdbCommandsForDevice(
@@ -37,24 +37,16 @@ class E2ETest {
         every { commandRunner.exec("adb devices") } returns AdbOutput.ADB_DEVICES.output
 
 
-        val application = GlobalScope.async {org.andcoe.adf.main(emptyArray(), commandRunner) }
-
+        val application = GlobalScope.async { org.andcoe.adf.main(emptyArray(), commandRunner) }
 
         val out = mockk<PrintStream>()
 
-
-        every{out.println(any<String>())} just Runs
+        every { out.println(any<String>()) } just Runs
 
         main("devices".split(" ").toTypedArray(), out)
 
-        verify{out.println("PIXEL")}
-
-
+        verify { out.println("PIXEL") }
 
         application.cancel()
-
-
-
-
     }
 }

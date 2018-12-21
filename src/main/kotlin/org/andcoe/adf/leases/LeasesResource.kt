@@ -16,4 +16,8 @@ class LeasesResource(private val leaseService: LeaseService) {
         if (lease != null) return lease
         throw NoDevicesAvailableToLease("No devices available to lease.")
     }
+
+    fun leases(): List<Lease> {
+        return leaseService.leases().map { it.value }
+    }
 }

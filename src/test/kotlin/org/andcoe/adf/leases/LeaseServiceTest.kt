@@ -135,4 +135,32 @@ class LeaseServiceTest {
         assertThatThrownBy { leaseService.create(DeviceId("some-random-device-id")) }
             .isInstanceOf(DeviceNotFound::class.java)
     }
+
+    @Test
+    fun returnsAllLeases() {
+        val devicesDb = mutableMapOf(
+            DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
+            DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
+        )
+        val deviceDao = DeviceDao(devicesDb)
+        val deviceService = DeviceService(deviceDao)
+
+        val leaseId1 = LeaseId(UUID.randomUUID().toString())
+        val leaseId2 = LeaseId(UUID.randomUUID().toString())
+
+        val leasesDb = mutableMapOf(
+            leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
+            leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
+        )
+        val leaseDao = LeaseDao(leasesDb)
+        val leaseService = LeaseService(deviceService, leaseDao)
+
+        assertThat(leaseService.leases())
+            .isEqualTo(
+                mapOf(
+                    leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
+                    leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
+                )
+            )
+    }
 }

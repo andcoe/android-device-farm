@@ -3,7 +3,6 @@ package org.andcoe.adf.cli
 
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.InvalidArgumentException
-import com.xenomachina.argparser.default
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
@@ -18,7 +17,7 @@ class MyArgs(parser: ArgParser) {
 
 
     companion object {
-        val  subCommands = listOf("test", "devices", "leases")
+        val subCommands = listOf("test", "devices", "leases")
     }
 
     val subCommand by parser.positional(
@@ -50,8 +49,6 @@ class MyArgs(parser: ArgParser) {
 //        .default(1)
 
 
-
-
 }
 
 
@@ -65,16 +62,17 @@ class MyArgs(parser: ArgParser) {
  */
 
 fun main(args: Array<String>) = main(args, System.out)
-fun main(args: Array<String>, out : PrintStream) {
+
+fun main(args: Array<String>, out: PrintStream) {
     ArgParser(args).parseInto(::MyArgs).run {
-        when(subCommand){
+        when (subCommand) {
             "devices" -> getDevices(out)
         }
     }
 
 }
 
-fun getDevices(out : PrintStream) {
+fun getDevices(out: PrintStream) {
     val client = HttpClient() {
         install(JsonFeature) {
             serializer = JacksonSerializer()
@@ -83,7 +81,7 @@ fun getDevices(out : PrintStream) {
 
     runBlocking {
         var notConnected = true
-        while(notConnected) {
+        while (notConnected) {
             delay(500)
             try {
                 val result = client.get<List<Device>>("http://0.0.0.0:8000/devices")
