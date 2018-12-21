@@ -1,25 +1,15 @@
 package org.andcoe.adf.cli
 
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.json.JacksonSerializer
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.request.get
 import io.mockk.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import org.andcoe.adf.core.CommandRunner
 import org.andcoe.adf.core.mockAdbCommandsForDevice
+import org.andcoe.adf.core.mockRestartAdb
 import org.junit.Test
 import util.AdbOutput
-import org.andcoe.adf.core.mockRestartAdb
-import org.andcoe.adf.devices.Device
 import util.DeviceUtils
-import java.net.ConnectException
 import java.io.PrintStream
-
 
 
 class E2ETest {

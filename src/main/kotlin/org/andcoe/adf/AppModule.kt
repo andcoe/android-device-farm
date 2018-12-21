@@ -13,6 +13,7 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
 import org.andcoe.adf.devices.DeviceResource
+import org.andcoe.adf.exceptions.DeviceNotFound
 import org.andcoe.adf.exceptions.NoDevicesAvailableToLease
 import org.andcoe.adf.exceptions.ResourceNotFound
 import org.andcoe.adf.leases.LeasesResource
@@ -29,6 +30,7 @@ class AppModule(private val deviceResource: DeviceResource,
         install(StatusPages) {
             exception<ResourceNotFound> { call.respond(HttpStatusCode.NotFound, mapOf("error" to it.message)) }
             exception<NoDevicesAvailableToLease> { call.respond(HttpStatusCode.BadRequest, mapOf("error" to it.message)) }
+            exception<DeviceNotFound> { call.respond(HttpStatusCode.NotFound, mapOf("error" to it.message)) }
         }
 
         routing {
@@ -41,6 +43,10 @@ class AppModule(private val deviceResource: DeviceResource,
             }
             post("/leases") {
                 call.respond(HttpStatusCode.Created, leasesResource.create())
+            }
+            post("/leases/{deviceId}") {
+                val deviceId: String = call.parameters["deviceId"]!!
+                call.respond(HttpStatusCode.Created, leasesResource.create(deviceId))
             }
         }
     }

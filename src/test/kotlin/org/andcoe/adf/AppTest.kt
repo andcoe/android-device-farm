@@ -163,7 +163,7 @@ class AppTest {
     }
 
     @Test
-    fun createsLease() {
+    fun createsLeaseForAnyDevice() {
         val devicesDb = mutableMapOf(
             DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
             DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
@@ -266,6 +266,123 @@ class AppTest {
             with(handleRequest(HttpMethod.Post, "/leases")) {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
                 assertThat(response.content).isEqualTo("""{"error":"No devices available to lease."}""")
+            }
+        }
+    }
+
+    @Test
+    fun createsLeaseForSpecificDevice() {
+        val devicesDb = mutableMapOf(
+            DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
+            DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
+        )
+        val deviceDao = DeviceDao(devicesDb)
+        val deviceService = DeviceService(deviceDao)
+        val deviceResource = DeviceResource(deviceService)
+
+        val leasesDb = mutableMapOf<LeaseId, Lease>()
+        val leaseDao = LeaseDao(leasesDb)
+        val leaseService = LeaseService(deviceService, leaseDao)
+        val leasesResource = LeasesResource(leaseService)
+
+        val appModule = AppModule(
+            deviceResource = deviceResource,
+            leasesResource = leasesResource
+        ).module()
+
+        withTestApplication(appModule) {
+            with(handleRequest(HttpMethod.Post, "/leases/${DEVICE_PIXEL.deviceId.id}")) {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.Created)
+
+                val leaseId = jacksonObjectMapper().readValue<Map<String, Any>>(response.content!!)["leaseId"] as Map<String, Any>
+                val id = leaseId["id"] as String
+
+                assertThatJson(response.content)
+                    .isEqualTo(
+                        """{
+                            "leaseId": {
+                                "id": "$id"
+                            },
+                            "device": {
+                                "deviceId": {
+                                    "id": "PIXEL"
+                                },
+                                "model": "Pixel",
+                                "manufacturer": "Google",
+                                "androidVersion": "9.0",
+                                "apiLevel": "28",
+                                "port": "7777"
+                            }
+                      }"""
+                    )
+            }
+        }
+    }
+
+    @Test
+    fun returnsErrorIfSpecificDeviceIsAlreadyLeased() {
+        val devicesDb = mutableMapOf(
+            DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
+            DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
+        )
+        val deviceDao = DeviceDao(devicesDb)
+        val deviceService = DeviceService(deviceDao)
+        val deviceResource = DeviceResource(deviceService)
+
+        val leaseId1 = LeaseId(UUID.randomUUID().toString())
+        val leaseId2 = LeaseId(UUID.randomUUID().toString())
+
+        val leasesDb = mutableMapOf(
+            leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
+            leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
+        )
+        val leaseDao = LeaseDao(leasesDb)
+        val leaseService = LeaseService(deviceService, leaseDao)
+        val leasesResource = LeasesResource(leaseService)
+
+        val appModule = AppModule(
+            deviceResource = deviceResource,
+            leasesResource = leasesResource
+        ).module()
+
+        withTestApplication(appModule) {
+            with(handleRequest(HttpMethod.Post, "/leases/${DEVICE_PIXEL.deviceId.id}")) {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
+                assertThat(response.content).isEqualTo("""{"error":"No devices available to lease."}""")
+            }
+        }
+    }
+
+    @Test
+    fun returnsErrorWhenSpecificDeviceIdNotFound() {
+        val devicesDb = mutableMapOf(
+            DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
+            DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
+        )
+        val deviceDao = DeviceDao(devicesDb)
+        val deviceService = DeviceService(deviceDao)
+        val deviceResource = DeviceResource(deviceService)
+
+        val leaseId1 = LeaseId(UUID.randomUUID().toString())
+        val leaseId2 = LeaseId(UUID.randomUUID().toString())
+
+        val leasesDb = mutableMapOf(
+            leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
+            leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
+        )
+        val leaseDao = LeaseDao(leasesDb)
+        val leaseService = LeaseService(deviceService, leaseDao)
+        val leasesResource = LeasesResource(leaseService)
+
+        val appModule = AppModule(
+            deviceResource = deviceResource,
+            leasesResource = leasesResource
+        ).module()
+
+        withTestApplication(appModule) {
+            with(handleRequest(HttpMethod.Post, "/leases/some-random-device-id")) {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.NotFound)
+                assertThat(response.content).isEqualTo("""{"error":"No device found with id: 'some-random-device-id'"}""")
             }
         }
     }
