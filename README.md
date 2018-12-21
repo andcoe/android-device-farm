@@ -1,7 +1,15 @@
 # android-device-farm
 
+## Objective:
+
 Android device farm is a tool that monitors and manages android devices that are connected to a machine (e.g raspberry pi).
+
+## How:
+
 Clients can acquire a device (lease) from the device farm using the rest api (shown below) and perform various tasks with it, e.g. running Android Espresso tests.
+
+## High level architecture:
+
 <pre>
 
                                                                                                        +-+
