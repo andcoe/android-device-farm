@@ -15,12 +15,12 @@ class LeasesResourceTest {
 
     @Test
     fun createsLeaseForAnyDevice() {
-        val devicesDb = mutableMapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
-        val deviceDao = DevicesDao(devicesDb)
+        val devicesStore = mutableMapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
+        val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
 
-        val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeasesDao(leasesDb)
+        val leasesStore = mutableMapOf<LeaseId, Lease>()
+        val leaseDao = LeasesDao(leasesStore)
         val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 
@@ -36,11 +36,11 @@ class LeasesResourceTest {
 
     @Test
     fun returnsErrorWhenNoFreeDevicesToLease() {
-        val deviceDao = DevicesDao(devicesDb = mutableMapOf())
+        val deviceDao = DevicesDao(devicesStore = mutableMapOf())
         val deviceService = DevicesService(deviceDao)
 
-        val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeasesDao(leasesDb)
+        val leasesStore = mutableMapOf<LeaseId, Lease>()
+        val leaseDao = LeasesDao(leasesStore)
         val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 
@@ -50,22 +50,22 @@ class LeasesResourceTest {
 
     @Test
     fun returnsErrorIfAllDevicesAlreadyLeased() {
-        val devicesDb = mutableMapOf(
+        val devicesStore = mutableMapOf(
             DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
             DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
-        val deviceDao = DevicesDao(devicesDb)
+        val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
 
         val leaseId1 = LeaseId(UUID.randomUUID().toString())
         val leaseId2 = LeaseId(UUID.randomUUID().toString())
 
-        val leasesDb = mutableMapOf(
+        val leasesStore = mutableMapOf(
             leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
             leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
         )
 
-        val leaseDao = LeasesDao(leasesDb)
+        val leaseDao = LeasesDao(leasesStore)
         val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 
@@ -75,12 +75,12 @@ class LeasesResourceTest {
 
     @Test
     fun createsLeaseForSpecificDevice() {
-        val devicesDb = mutableMapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
-        val deviceDao = DevicesDao(devicesDb)
+        val devicesStore = mutableMapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
+        val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
 
-        val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeasesDao(leasesDb)
+        val leasesStore = mutableMapOf<LeaseId, Lease>()
+        val leaseDao = LeasesDao(leasesStore)
         val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 
@@ -96,22 +96,22 @@ class LeasesResourceTest {
 
     @Test
     fun returnsErrorIfDeviceAlreadyLeased() {
-        val devicesDb = mutableMapOf(
+        val devicesStore = mutableMapOf(
             DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
             DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
-        val deviceDao = DevicesDao(devicesDb)
+        val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
 
         val leaseId1 = LeaseId(UUID.randomUUID().toString())
         val leaseId2 = LeaseId(UUID.randomUUID().toString())
 
-        val leasesDb = mutableMapOf(
+        val leasesStore = mutableMapOf(
             leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
             leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
         )
 
-        val leaseDao = LeasesDao(leasesDb)
+        val leaseDao = LeasesDao(leasesStore)
         val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 
@@ -121,19 +121,19 @@ class LeasesResourceTest {
 
     @Test
     fun returnsErrorWhenSpecificDeviceIdNotFound() {
-        val devicesDb = mutableMapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
-        val deviceDao = DevicesDao(devicesDb)
+        val devicesStore = mutableMapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
+        val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
 
         val leaseId1 = LeaseId(UUID.randomUUID().toString())
         val leaseId2 = LeaseId(UUID.randomUUID().toString())
 
-        val leasesDb = mutableMapOf(
+        val leasesStore = mutableMapOf(
             leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
             leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
         )
 
-        val leaseDao = LeasesDao(leasesDb)
+        val leaseDao = LeasesDao(leasesStore)
         val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 
@@ -143,19 +143,19 @@ class LeasesResourceTest {
 
     @Test
     fun returnsAllLeases() {
-        val devicesDb = mutableMapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
-        val deviceDao = DevicesDao(devicesDb)
+        val devicesStore = mutableMapOf(DEVICE_PIXEL.deviceId to DEVICE_PIXEL)
+        val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
 
         val leaseId1 = LeaseId(UUID.randomUUID().toString())
         val leaseId2 = LeaseId(UUID.randomUUID().toString())
 
-        val leasesDb = mutableMapOf(
+        val leasesStore = mutableMapOf(
             leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
             leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
         )
 
-        val leaseDao = LeasesDao(leasesDb)
+        val leaseDao = LeasesDao(leasesStore)
         val leaseService = LeasesService(deviceService, leaseDao)
         val leaseResource = LeasesResource(leaseService)
 

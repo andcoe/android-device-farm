@@ -10,8 +10,8 @@ class LeasesDaoTest {
 
     @Test
     fun createsLease() {
-        val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeasesDao(leasesDb)
+        val leasesStore = mutableMapOf<LeaseId, Lease>()
+        val leaseDao = LeasesDao(leasesStore)
 
         val actual = leaseDao.create(DEVICE_PIXEL)
         val expected = Lease(
@@ -23,8 +23,8 @@ class LeasesDaoTest {
 
     @Test
     fun returnsEmptyLeases() {
-        val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeasesDao(leasesDb)
+        val leasesStore = mutableMapOf<LeaseId, Lease>()
+        val leaseDao = LeasesDao(leasesStore)
         assertThat(leaseDao.leases()).isEqualTo(emptyMap<LeaseId, Lease>())
     }
 
@@ -33,12 +33,12 @@ class LeasesDaoTest {
         val leaseId1 = LeaseId(UUID.randomUUID().toString())
         val leaseId2 = LeaseId(UUID.randomUUID().toString())
 
-        val leasesDb = mutableMapOf(
+        val leasesStore = mutableMapOf(
             leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
             leaseId2 to Lease(leaseId = leaseId2, device = DeviceUtils.DEVICE_SAMSUNG)
         )
 
-        val leaseDao = LeasesDao(leasesDb)
+        val leaseDao = LeasesDao(leasesStore)
         assertThat(leaseDao.leases()).isEqualTo(
             mapOf(
                 leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),

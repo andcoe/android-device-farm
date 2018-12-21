@@ -27,7 +27,7 @@ class LeasesApiTest {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.Created)
 
                 val leaseId =
-                    jacksonObjectMapper().readValue<Map<String, Any>>(response.content!!)["leaseId"] as Map<String, Any>
+                    jacksonObjectMapper().readValue<Map<String, Any>>(response.content!!)["leaseId"] as Map<*, *>
                 val id = leaseId["id"] as String
 
                 assertThatJson(response.content)
@@ -186,13 +186,13 @@ class LeasesApiTest {
     }
 
     private fun noDevicesScenario(): (Application) -> Unit {
-        val devicesDb = mutableMapOf<DeviceId, Device>()
-        val deviceDao = DevicesDao(devicesDb)
+        val devicesStore = mutableMapOf<DeviceId, Device>()
+        val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
         val deviceResource = DevicesResource(deviceService)
 
-        val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeasesDao(leasesDb)
+        val leasesStore = mutableMapOf<LeaseId, Lease>()
+        val leaseDao = LeasesDao(leasesStore)
         val leaseService = LeasesService(deviceService, leaseDao)
         val leasesResource = LeasesResource(leaseService)
 
@@ -203,16 +203,16 @@ class LeasesApiTest {
     }
 
     private fun devicesWithoutLeasesScenario(): (Application) -> Unit {
-        val devicesDb = mutableMapOf(
+        val devicesStore = mutableMapOf(
             DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
             DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
-        val deviceDao = DevicesDao(devicesDb)
+        val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
         val deviceResource = DevicesResource(deviceService)
 
-        val leasesDb = mutableMapOf<LeaseId, Lease>()
-        val leaseDao = LeasesDao(leasesDb)
+        val leasesStore = mutableMapOf<LeaseId, Lease>()
+        val leaseDao = LeasesDao(leasesStore)
         val leaseService = LeasesService(deviceService, leaseDao)
         val leasesResource = LeasesResource(leaseService)
 
@@ -227,19 +227,19 @@ class LeasesApiTest {
         leaseId1: LeaseId = LeaseId(UUID.randomUUID().toString()),
         leaseId2: LeaseId = LeaseId(UUID.randomUUID().toString())
     ): (Application) -> Unit {
-        val devicesDb = mutableMapOf(
+        val devicesStore = mutableMapOf(
             DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
             DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
-        val deviceDao = DevicesDao(devicesDb)
+        val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
         val deviceResource = DevicesResource(deviceService)
 
-        val leasesDb = mutableMapOf(
+        val leasesStore = mutableMapOf(
             leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
             leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
         )
-        val leaseDao = LeasesDao(leasesDb)
+        val leaseDao = LeasesDao(leasesStore)
         val leaseService = LeasesService(deviceService, leaseDao)
         val leasesResource = LeasesResource(leaseService)
 

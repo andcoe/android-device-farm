@@ -9,8 +9,8 @@ import org.andcoe.adf.devices.DevicesDao
 import org.andcoe.adf.devices.DevicesResource
 import org.andcoe.adf.devices.DevicesService
 import org.andcoe.adf.leases.LeasesDao
-import org.andcoe.adf.leases.LeasesService
 import org.andcoe.adf.leases.LeasesResource
+import org.andcoe.adf.leases.LeasesService
 import java.util.concurrent.Executors
 
 //Aliased main function used to start the app and fake commands run on terminal

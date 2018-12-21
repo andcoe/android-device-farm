@@ -12,8 +12,8 @@ class DevicesResourceTest {
 
     @Test
     fun returnsEmptyDevices() {
-        val devicesDb = mutableMapOf<DeviceId, Device>()
-        val deviceDao = DevicesDao(devicesDb)
+        val devicesStore = mutableMapOf<DeviceId, Device>()
+        val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
         val deviceResource = DevicesResource(deviceService)
         assertThat(deviceResource.devices()).isEqualTo(emptyList<Device>())
@@ -21,11 +21,11 @@ class DevicesResourceTest {
 
     @Test
     fun returnsDevices() {
-        val devicesDb = mutableMapOf(
+        val devicesStore = mutableMapOf(
             DeviceUtils.DEVICE_PIXEL.deviceId to DeviceUtils.DEVICE_PIXEL,
             DeviceUtils.DEVICE_SAMSUNG.deviceId to DeviceUtils.DEVICE_SAMSUNG
         )
-        val deviceDao = DevicesDao(devicesDb)
+        val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
         val deviceResource = DevicesResource(deviceService)
         assertThat(deviceResource.devices()).isEqualTo(
@@ -38,11 +38,11 @@ class DevicesResourceTest {
 
     @Test
     fun returnsDeviceById() {
-        val devicesDb = mutableMapOf(
+        val devicesStore = mutableMapOf(
             DeviceUtils.DEVICE_PIXEL.deviceId to DeviceUtils.DEVICE_PIXEL,
             DeviceUtils.DEVICE_SAMSUNG.deviceId to DeviceUtils.DEVICE_SAMSUNG
         )
-        val deviceDao = DevicesDao(devicesDb)
+        val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
         val deviceResource = DevicesResource(deviceService)
         assertThat(deviceResource.devices(DEVICE_PIXEL.deviceId.id)).isEqualTo(DEVICE_PIXEL)
@@ -50,11 +50,11 @@ class DevicesResourceTest {
 
     @Test
     fun throwsIfNoDeviceFoundById() {
-        val devicesDb = mutableMapOf(
+        val devicesStore = mutableMapOf(
             DeviceUtils.DEVICE_PIXEL.deviceId to DeviceUtils.DEVICE_PIXEL,
             DeviceUtils.DEVICE_SAMSUNG.deviceId to DeviceUtils.DEVICE_SAMSUNG
         )
-        val deviceDao = DevicesDao(devicesDb)
+        val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
         val deviceResource = DevicesResource(deviceService)
         assertThatThrownBy { deviceResource.devices("random-id") }.isInstanceOf(ResourceNotFound::class.java)

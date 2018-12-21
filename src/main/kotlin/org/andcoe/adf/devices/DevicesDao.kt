@@ -2,11 +2,11 @@ package org.andcoe.adf.devices
 
 import org.andcoe.adf.core.AdbDevice
 
-class DevicesDao(private val devicesDb: MutableMap<DeviceId, Device> = mutableMapOf()) {
+class DevicesDao(private val devicesStore: MutableMap<DeviceId, Device> = mutableMapOf()) {
 
-    fun devices(): Map<DeviceId, Device> = devicesDb
+    fun devices(): Map<DeviceId, Device> = devicesStore
 
-    fun devices(deviceId: DeviceId): Device? = devicesDb[deviceId]
+    fun devices(deviceId: DeviceId): Device? = devicesStore[deviceId]
 
     fun create(adbDevice: AdbDevice): Device {
         val device = Device(
@@ -17,11 +17,11 @@ class DevicesDao(private val devicesDb: MutableMap<DeviceId, Device> = mutableMa
             apiLevel = adbDevice.apiLevel,
             port = adbDevice.port
         )
-        devicesDb[device.deviceId] = device
+        devicesStore[device.deviceId] = device
         return device
     }
 
     fun remove(deviceId: DeviceId) {
-        devicesDb.remove(deviceId)
+        devicesStore.remove(deviceId)
     }
 }
