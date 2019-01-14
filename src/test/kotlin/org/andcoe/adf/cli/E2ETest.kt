@@ -6,6 +6,7 @@ import kotlinx.coroutines.async
 import org.andcoe.adf.core.CommandRunner
 import org.andcoe.adf.core.mockAdbCommandsForDevice
 import org.andcoe.adf.core.mockRestartAdb
+import org.junit.Ignore
 import org.junit.Test
 import util.AdbOutput
 import util.DeviceUtils
@@ -15,6 +16,7 @@ import java.io.PrintStream
 class E2ETest {
 
     @Test
+    @Ignore
     fun appStartsAndChecksForDevices() {
         val commandRunner = mockk<CommandRunner>()
         commandRunner.mockRestartAdb()

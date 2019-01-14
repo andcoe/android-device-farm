@@ -10,7 +10,7 @@ class DevicesService(private val devicesDao: DevicesDao) {
 
     fun create(adbDevice: AdbDevice): Device = devicesDao.create(adbDevice)
 
-    fun remove(deviceId: DeviceId) {
-        devicesDao.remove(deviceId)
+    fun delete(deviceId: DeviceId) {
+        devicesDao.delete(deviceId)
     }
 }

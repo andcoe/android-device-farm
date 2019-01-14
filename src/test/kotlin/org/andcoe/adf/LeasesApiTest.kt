@@ -185,6 +185,23 @@ class LeasesApiTest {
         }
     }
 
+    @Test
+    fun deleteLeasedDevice() {
+        val leaseId1 = LeaseId("123")
+        val leaseId2 = LeaseId("456")
+        val appModule = allDevicesLeasedScenario(
+            leaseId1 = leaseId1,
+            leaseId2 = leaseId2
+        )
+
+        withTestApplication(appModule) {
+            with(handleRequest(HttpMethod.Delete, "/leases/{leaseId}")) {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.NoContent)
+                assertThat(response.content).isNull()
+            }
+        }
+    }
+
     private fun noDevicesScenario(): (Application) -> Unit {
         val devicesStore = mutableMapOf<DeviceId, Device>()
         val deviceDao = DevicesDao(devicesStore)

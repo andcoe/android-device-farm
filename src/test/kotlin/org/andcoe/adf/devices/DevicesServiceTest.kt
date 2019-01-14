@@ -54,7 +54,7 @@ class DevicesServiceTest {
         deviceDao.create(ADB_PIXEL)
         deviceDao.create(ADB_SAMSUNG)
         val deviceService = DevicesService(deviceDao)
-        deviceService.remove(DEVICE_PIXEL.deviceId)
+        deviceService.delete(DEVICE_PIXEL.deviceId)
         assertThat(deviceService.devices()).isEqualTo(
             mapOf(DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG)
         )

@@ -5,10 +5,8 @@ import org.andcoe.adf.devices.DeviceId
 import org.andcoe.adf.devices.DevicesService
 import org.andcoe.adf.exceptions.DeviceNotFound
 
-class LeasesService(
-    private val devicesService: DevicesService,
-    private val leasesDao: LeasesDao
-) {
+class LeasesService(private val devicesService: DevicesService,
+                    private val leasesDao: LeasesDao) {
 
     fun create(): Lease? {
         val leases = leasesDao.leases()
@@ -30,4 +28,8 @@ class LeasesService(
     }
 
     fun leases(): Map<LeaseId, Lease> = leasesDao.leases()
+
+    fun delete(leaseId: String) {
+        leasesDao.delete(leaseId)
+    }
 }

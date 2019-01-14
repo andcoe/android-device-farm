@@ -101,12 +101,12 @@ class AdbMonitorTest {
                 DEVICE_PIXEL.port
             )
         )
-        every { devicesService.remove(DEVICE_PIXEL.deviceId) } just Runs
+        every { devicesService.delete(DEVICE_PIXEL.deviceId) } just Runs
 
         adbMonitor.refreshDevicesWith(listOf())
 
         verify { devicesService.devices() }
-        verify { devicesService.remove(DEVICE_PIXEL.deviceId) }
+        verify { devicesService.delete(DEVICE_PIXEL.deviceId) }
     }
 
     @Test
@@ -115,12 +115,12 @@ class AdbMonitorTest {
             DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
             DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
-        every { devicesService.remove(DEVICE_PIXEL.deviceId) } just Runs
+        every { devicesService.delete(DEVICE_PIXEL.deviceId) } just Runs
 
         adbMonitor.refreshDevicesWith(listOf(DEVICE_SAMSUNG.deviceId))
 
         verify { devicesService.devices() }
-        verify { devicesService.remove(DEVICE_PIXEL.deviceId) }
+        verify { devicesService.delete(DEVICE_PIXEL.deviceId) }
     }
 
 

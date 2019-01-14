@@ -163,4 +163,33 @@ class LeasesServiceTest {
                 )
             )
     }
+
+    @Test
+    fun  deletesLease() {
+        val devicesStore = mutableMapOf(
+            DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
+            DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
+        )
+        val deviceDao = DevicesDao(devicesStore)
+        val deviceService = DevicesService(deviceDao)
+
+        val leaseId1 = LeaseId(UUID.randomUUID().toString())
+        val leaseId2 = LeaseId(UUID.randomUUID().toString())
+
+        val leasesStore = mutableMapOf(
+            leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
+            leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
+        )
+        val leaseDao = LeasesDao(leasesStore)
+        val leaseService = LeasesService(deviceService, leaseDao)
+
+        leaseService.delete(leaseId1.id)
+
+        assertThat(leaseService.leases())
+            .isEqualTo(
+                mapOf(
+                    leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
+                )
+            )
+    }
 }

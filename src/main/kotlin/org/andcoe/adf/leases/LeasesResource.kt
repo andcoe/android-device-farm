@@ -20,4 +20,8 @@ class LeasesResource(private val leasesService: LeasesService) {
     fun leases(): List<Lease> {
         return leasesService.leases().map { it.value }
     }
+
+    fun delete(leaseId: String) {
+        leasesService.delete(leaseId)
+    }
 }

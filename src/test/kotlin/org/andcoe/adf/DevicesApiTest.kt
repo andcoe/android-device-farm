@@ -12,6 +12,7 @@ import util.DeviceUtils
 import util.JsonAssertion.Companion.assertThatJson
 
 class DevicesApiTest {
+
     @Test
     fun returnsEmptyJson() {
         val devicesStore = mutableMapOf<DeviceId, Device>()

@@ -21,7 +21,7 @@ class DevicesDao(private val devicesStore: MutableMap<DeviceId, Device> = mutabl
         return device
     }
 
-    fun remove(deviceId: DeviceId) {
+    fun delete(deviceId: DeviceId) {
         devicesStore.remove(deviceId)
     }
 }

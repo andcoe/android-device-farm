@@ -9,6 +9,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.jackson.JacksonConverter
 import io.ktor.response.respond
+import io.ktor.routing.delete
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
@@ -31,12 +32,7 @@ class AppModule(
 
         install(StatusPages) {
             exception<ResourceNotFound> { call.respond(HttpStatusCode.NotFound, mapOf("error" to it.message)) }
-            exception<NoDevicesAvailableToLease> {
-                call.respond(
-                    HttpStatusCode.BadRequest,
-                    mapOf("error" to it.message)
-                )
-            }
+            exception<NoDevicesAvailableToLease> { call.respond(HttpStatusCode.BadRequest, mapOf("error" to it.message)) }
             exception<DeviceNotFound> { call.respond(HttpStatusCode.NotFound, mapOf("error" to it.message)) }
         }
 
@@ -57,6 +53,11 @@ class AppModule(
             post("/leases/{deviceId}") {
                 val deviceId: String = call.parameters["deviceId"]!!
                 call.respond(HttpStatusCode.Created, leasesResource.create(deviceId))
+            }
+            delete("/leases/{leaseId}") {
+                val leaseId: String = call.parameters["leaseId"]!!
+                leasesResource.delete(leaseId)
+                call.respond(HttpStatusCode.NoContent)
             }
         }
     }

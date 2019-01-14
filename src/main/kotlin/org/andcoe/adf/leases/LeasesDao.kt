@@ -13,4 +13,8 @@ class LeasesDao(private val leasesStore: MutableMap<LeaseId, Lease> = mutableMap
     }
 
     fun leases(): Map<LeaseId, Lease> = leasesStore
+
+    fun delete(leaseId: String) {
+        leasesStore.remove(LeaseId(leaseId))
+    }
 }

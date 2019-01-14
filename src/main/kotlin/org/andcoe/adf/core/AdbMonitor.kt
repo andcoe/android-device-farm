@@ -43,7 +43,7 @@ class AdbMonitor(
 
         preparedDevices
             .filter { removedDevices.contains(it.key) }
-            .map { devicesService.remove(it.key) }
+            .map { devicesService.delete(it.key) }
 
         val newDevices: List<DeviceId> = connectedDevices.filter { !preparedDevices.containsKey(it) }
         println("AdbMonitor => connected now: $newDevices")

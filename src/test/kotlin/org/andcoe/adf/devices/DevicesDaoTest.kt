@@ -29,7 +29,7 @@ class DevicesDaoTest {
         val deviceDao = DevicesDao()
         deviceDao.create(ADB_PIXEL)
         deviceDao.create(ADB_SAMSUNG)
-        deviceDao.remove(DEVICE_PIXEL.deviceId)
+        deviceDao.delete(DEVICE_PIXEL.deviceId)
         assertThat(deviceDao.devices()).isEqualTo(mapOf(DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG))
     }
 }
