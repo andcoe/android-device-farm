@@ -20,15 +20,11 @@ class MyArgs(parser: ArgParser) {
         val subCommands = listOf("test", "devices", "leases")
     }
 
-    val subCommand by parser.positional(
-        "SUB_COMMAND",
-        help = "subCommand"
-    )
+    val subCommand by parser
+        .positional("SUB_COMMAND", help = "subCommand")
         .addValidator {
             if (!subCommands.contains(value))
-                throw InvalidArgumentException(
-                    "sub command must be one of ${subCommands}"
-                )
+                throw InvalidArgumentException("sub command must be one of $subCommands")
         }
 
 //
@@ -73,23 +69,21 @@ fun main(args: Array<String>, out: PrintStream) {
 }
 
 fun getDevices(out: PrintStream) {
-    val client = HttpClient() {
-        install(JsonFeature) {
-            serializer = JacksonSerializer()
-        }
+    val client = HttpClient {
+        install(JsonFeature) { serializer = JacksonSerializer() }
     }
 
     runBlocking {
         var notConnected = true
         while (notConnected) {
-            delay(500)
             try {
-                val result = client.get<List<Device>>("http://0.0.0.0:8000/devices")
+                val result = client.get<List<Device>>("http://127.0.0.1:8000/devices")
                 out.println(result[0].deviceId.id)
                 notConnected = false
             } catch (e: ConnectException) {
                 println("NOT READY")
             }
+            delay(200)
         }
     }
 

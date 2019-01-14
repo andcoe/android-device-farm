@@ -16,7 +16,6 @@ import java.io.PrintStream
 class E2ETest {
 
     @Test
-    @Ignore
     fun appStartsAndChecksForDevices() {
         val commandRunner = mockk<CommandRunner>()
         commandRunner.mockRestartAdb()
