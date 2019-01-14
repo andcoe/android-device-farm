@@ -34,7 +34,7 @@ Clients can acquire a device (lease) from the device farm using the rest api (sh
 | GET    /leases            |   |                 |   |                 |   |                 |     X             X
 | POST   /leases            +---> leasesResource  +--->  leasesService  +--->    leasesDao    +--->X leasesStore   X
 | POST   /leases/{deviceId} |   |                 |   |                 |   |                 |    X               X
-| DELETE /leases/{deviceId} |   |                 |   |                 |   |                 |     X             X
+| DELETE /leases/{leaseId}  |   |                 |   |                 |   |                 |     X             X
 +---------------------------+   +-----------------+   +-----------------+   +-----------------+      XXXXXXXXXXXXX
 </pre>
 
