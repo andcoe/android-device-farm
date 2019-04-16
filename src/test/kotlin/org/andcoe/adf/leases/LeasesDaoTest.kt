@@ -1,9 +1,9 @@
 package org.andcoe.adf.leases
 
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_PIXEL
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_SAMSUNG
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import util.DeviceUtils
-import util.DeviceUtils.Companion.DEVICE_PIXEL
 import java.util.*
 
 class LeasesDaoTest {
@@ -35,14 +35,14 @@ class LeasesDaoTest {
 
         val leasesStore = mutableMapOf(
             leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
-            leaseId2 to Lease(leaseId = leaseId2, device = DeviceUtils.DEVICE_SAMSUNG)
+            leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
         )
 
         val leaseDao = LeasesDao(leasesStore)
         assertThat(leaseDao.leases()).isEqualTo(
             mapOf(
                 leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
-                leaseId2 to Lease(leaseId = leaseId2, device = DeviceUtils.DEVICE_SAMSUNG)
+                leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
             )
         )
     }
@@ -54,7 +54,7 @@ class LeasesDaoTest {
 
         val leasesStore = mutableMapOf(
             leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
-            leaseId2 to Lease(leaseId = leaseId2, device = DeviceUtils.DEVICE_SAMSUNG)
+            leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
         )
 
         val leaseDao = LeasesDao(leasesStore)
@@ -63,7 +63,7 @@ class LeasesDaoTest {
 
         assertThat(leaseDao.leases()).isEqualTo(
             mapOf(
-                leaseId2 to Lease(leaseId = leaseId2, device = DeviceUtils.DEVICE_SAMSUNG)
+                leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
             )
         )
     }

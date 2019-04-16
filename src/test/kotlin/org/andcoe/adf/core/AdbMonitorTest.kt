@@ -5,12 +5,11 @@ import org.andcoe.adf.devices.Device
 import org.andcoe.adf.devices.DeviceId
 import org.andcoe.adf.devices.DevicesService
 import org.junit.Test
-import util.AdbOutput
-import util.AdbOutput.*
-import util.DeviceUtils.Companion.ADB_PIXEL
-import util.DeviceUtils.Companion.ADB_SAMSUNG
-import util.DeviceUtils.Companion.DEVICE_PIXEL
-import util.DeviceUtils.Companion.DEVICE_SAMSUNG
+import org.andcoe.adf.core.AdbOutput.*
+import org.andcoe.adf.core.AdbOutput.Companion.ADB_PIXEL
+import org.andcoe.adf.core.AdbOutput.Companion.ADB_SAMSUNG
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_PIXEL
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_SAMSUNG
 
 class AdbMonitorTest {
 

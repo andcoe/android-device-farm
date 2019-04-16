@@ -2,9 +2,9 @@ package org.andcoe.adf.core
 
 import java.util.concurrent.TimeUnit
 
-class CommandRunner {
+open class CommandRunner {
 
-    fun exec(command: String, timeoutAmount: Long = 15, timeoutUnit: TimeUnit = TimeUnit.SECONDS): String {
+    open fun exec(command: String, timeoutAmount: Long = 15, timeoutUnit: TimeUnit = TimeUnit.SECONDS): String {
 //        println("""> $command""")
 
         val process = ProcessBuilder(*command.split("\\s".toRegex()).toTypedArray())

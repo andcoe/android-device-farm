@@ -7,12 +7,12 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_PIXEL
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_SAMSUNG
 import org.andcoe.adf.devices.*
 import org.andcoe.adf.leases.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import util.DeviceUtils.Companion.DEVICE_PIXEL
-import util.DeviceUtils.Companion.DEVICE_SAMSUNG
 import util.JsonAssertion.Companion.assertThatJson
 import java.util.*
 

@@ -1,11 +1,11 @@
 package org.andcoe.adf.devices
 
+import org.andcoe.adf.core.AdbOutput.Companion.ADB_PIXEL
+import org.andcoe.adf.core.AdbOutput.Companion.ADB_SAMSUNG
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_PIXEL
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_SAMSUNG
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import util.DeviceUtils.Companion.ADB_PIXEL
-import util.DeviceUtils.Companion.ADB_SAMSUNG
-import util.DeviceUtils.Companion.DEVICE_PIXEL
-import util.DeviceUtils.Companion.DEVICE_SAMSUNG
 
 class DevicesServiceTest {
 

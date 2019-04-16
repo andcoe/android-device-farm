@@ -1,5 +1,7 @@
 package org.andcoe.adf.leases
 
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_PIXEL
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_SAMSUNG
 import org.andcoe.adf.devices.DevicesDao
 import org.andcoe.adf.devices.DevicesService
 import org.andcoe.adf.exceptions.DeviceNotFound
@@ -7,8 +9,6 @@ import org.andcoe.adf.exceptions.NoDevicesAvailableToLease
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
-import util.DeviceUtils.Companion.DEVICE_PIXEL
-import util.DeviceUtils.Companion.DEVICE_SAMSUNG
 import java.util.*
 
 class LeasesResourceTest {

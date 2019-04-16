@@ -1,53 +1,40 @@
 package org.andcoe.adf.cli
 
-import io.mockk.*
+import io.ktor.client.HttpClient
+import io.ktor.client.features.json.JacksonSerializer
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.request.get
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import org.andcoe.adf.core.CommandRunner
-import org.andcoe.adf.core.mockAdbCommandsForDevice
-import org.andcoe.adf.core.mockRestartAdb
-import org.junit.Ignore
+import kotlinx.coroutines.runBlocking
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_PIXEL
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_SAMSUNG
+import org.andcoe.adf.core.LocalCommandRunner
+import org.andcoe.adf.devices.Device
+import org.andcoe.adf.devices.DeviceId
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import util.AdbOutput
-import util.DeviceUtils
-import java.io.PrintStream
-
 
 class E2ETest {
 
     @Test
     fun appStartsAndChecksForDevices() {
-        val commandRunner = mockk<CommandRunner>()
-        commandRunner.mockRestartAdb()
-        commandRunner.mockAdbCommandsForDevice(
-            deviceId = DeviceUtils.DEVICE_PIXEL.deviceId,
-            tcpIpPort = 7777,
-            adbModelResponse = AdbOutput.ADB_DEVICE_MODEL_PIXEL,
-            adbManufacturerResponse = AdbOutput.ADB_DEVICE_MANUFACTURER_GOOGLE,
-            adbAndroidVersionResponse = AdbOutput.ADB_ANDROID_VERSION_PIXEL,
-            adbApiLevelResponse = AdbOutput.ADB_API_LEVEL_PIXEL
+        val application = GlobalScope.async { org.andcoe.adf.main(emptyArray(), LocalCommandRunner()) }
+
+        Thread.sleep(500)
+
+        assertThat(getDevices()).isEqualTo(
+            listOf(
+                DEVICE_PIXEL,
+                DEVICE_SAMSUNG
+            )
         )
-        commandRunner.mockAdbCommandsForDevice(
-            deviceId = DeviceUtils.DEVICE_SAMSUNG.deviceId,
-            tcpIpPort = 7778,
-            adbModelResponse = AdbOutput.ADB_DEVICE_MODEL_S9,
-            adbManufacturerResponse = AdbOutput.ADB_DEVICE_MANUFACTURER_SAMSUNG,
-            adbAndroidVersionResponse = AdbOutput.ADB_ANDROID_VERSION_S9,
-            adbApiLevelResponse = AdbOutput.ADB_API_LEVEL_S9
-        )
-        every { commandRunner.exec("adb devices") } returns AdbOutput.ADB_DEVICES.output
-
-
-        val application = GlobalScope.async { org.andcoe.adf.main(emptyArray(), commandRunner) }
-
-        val out = mockk<PrintStream>()
-
-        every { out.println(any<String>()) } just Runs
-
-        main("devices".split(" ").toTypedArray(), out)
-
-        verify { out.println("PIXEL") }
 
         application.cancel()
+    }
+
+    private fun getDevices(): List<Device> {
+        val client = HttpClient { install(JsonFeature) { serializer = JacksonSerializer() } }
+        return runBlocking { client.get<List<Device>>("http://127.0.0.1:8000/devices") }
     }
 }

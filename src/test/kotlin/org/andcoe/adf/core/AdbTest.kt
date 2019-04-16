@@ -6,9 +6,9 @@ import io.mockk.verify
 import org.andcoe.adf.devices.DeviceId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import util.AdbOutput.*
-import util.DeviceUtils.Companion.ADB_PIXEL
-import util.DeviceUtils.Companion.ADB_SAMSUNG
+import org.andcoe.adf.core.AdbOutput.*
+import org.andcoe.adf.core.AdbOutput.Companion.ADB_PIXEL
+import org.andcoe.adf.core.AdbOutput.Companion.ADB_SAMSUNG
 
 class AdbTest {
 

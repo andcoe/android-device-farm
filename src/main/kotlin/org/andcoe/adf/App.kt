@@ -14,7 +14,9 @@ import org.andcoe.adf.leases.LeasesService
 import java.util.concurrent.Executors
 
 //Aliased main function used to start the app and fake commands run on terminal
-fun main(args: Array<String>) = main(args, CommandRunner())
+fun main(args: Array<String>) =
+//    LocalApp().run()
+  main(args, CommandRunner())
 
 fun main(args: Array<String>, commandRunner: CommandRunner) {
     val deviceDao = DevicesDao()

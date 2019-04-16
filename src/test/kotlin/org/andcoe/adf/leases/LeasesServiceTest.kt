@@ -1,5 +1,7 @@
 package org.andcoe.adf.leases
 
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_PIXEL
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_SAMSUNG
 import org.andcoe.adf.devices.Device
 import org.andcoe.adf.devices.DeviceId
 import org.andcoe.adf.devices.DevicesDao
@@ -8,9 +10,6 @@ import org.andcoe.adf.exceptions.DeviceNotFound
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
-import util.DeviceUtils
-import util.DeviceUtils.Companion.DEVICE_PIXEL
-import util.DeviceUtils.Companion.DEVICE_SAMSUNG
 import java.util.*
 
 class LeasesServiceTest {
@@ -59,7 +58,7 @@ class LeasesServiceTest {
 
         val leasesStore = mutableMapOf(
             leaseId1 to Lease(leaseId = leaseId1, device = DEVICE_PIXEL),
-            leaseId2 to Lease(leaseId = leaseId2, device = DeviceUtils.DEVICE_SAMSUNG)
+            leaseId2 to Lease(leaseId = leaseId2, device = DEVICE_SAMSUNG)
         )
         val leaseDao = LeasesDao(leasesStore)
         val leaseService = LeasesService(deviceService, leaseDao)

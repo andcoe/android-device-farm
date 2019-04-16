@@ -4,11 +4,12 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_PIXEL
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_SAMSUNG
 import org.andcoe.adf.devices.*
 import org.andcoe.adf.leases.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import util.DeviceUtils
 import util.JsonAssertion.Companion.assertThatJson
 
 class DevicesApiTest {
@@ -41,8 +42,8 @@ class DevicesApiTest {
     @Test
     fun returnsDevicesJson() {
         val devicesStore = mutableMapOf(
-            DeviceUtils.DEVICE_PIXEL.deviceId to DeviceUtils.DEVICE_PIXEL,
-            DeviceUtils.DEVICE_SAMSUNG.deviceId to DeviceUtils.DEVICE_SAMSUNG
+            DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
+            DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
         val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
@@ -93,8 +94,8 @@ class DevicesApiTest {
     @Test
     fun returnsDeviceByIdJson() {
         val devicesStore = mutableMapOf(
-            DeviceUtils.DEVICE_PIXEL.deviceId to DeviceUtils.DEVICE_PIXEL,
-            DeviceUtils.DEVICE_SAMSUNG.deviceId to DeviceUtils.DEVICE_SAMSUNG
+            DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
+            DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
         val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
@@ -133,8 +134,8 @@ class DevicesApiTest {
     @Test
     fun returnsDeviceByIdAndHandlesNotFound() {
         val devicesStore = mutableMapOf(
-            DeviceUtils.DEVICE_PIXEL.deviceId to DeviceUtils.DEVICE_PIXEL,
-            DeviceUtils.DEVICE_SAMSUNG.deviceId to DeviceUtils.DEVICE_SAMSUNG
+            DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
+            DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
         val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)

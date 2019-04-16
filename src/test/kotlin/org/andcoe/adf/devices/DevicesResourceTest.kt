@@ -1,12 +1,11 @@
 package org.andcoe.adf.devices
 
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_PIXEL
+import org.andcoe.adf.core.AdbOutput.Companion.DEVICE_SAMSUNG
 import org.andcoe.adf.exceptions.ResourceNotFound
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
-import util.DeviceUtils
-import util.DeviceUtils.Companion.DEVICE_PIXEL
-import util.DeviceUtils.Companion.DEVICE_SAMSUNG
 
 class DevicesResourceTest {
 
@@ -22,8 +21,8 @@ class DevicesResourceTest {
     @Test
     fun returnsDevices() {
         val devicesStore = mutableMapOf(
-            DeviceUtils.DEVICE_PIXEL.deviceId to DeviceUtils.DEVICE_PIXEL,
-            DeviceUtils.DEVICE_SAMSUNG.deviceId to DeviceUtils.DEVICE_SAMSUNG
+            DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
+            DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
         val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
@@ -39,8 +38,8 @@ class DevicesResourceTest {
     @Test
     fun returnsDeviceById() {
         val devicesStore = mutableMapOf(
-            DeviceUtils.DEVICE_PIXEL.deviceId to DeviceUtils.DEVICE_PIXEL,
-            DeviceUtils.DEVICE_SAMSUNG.deviceId to DeviceUtils.DEVICE_SAMSUNG
+            DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
+            DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
         val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
@@ -51,8 +50,8 @@ class DevicesResourceTest {
     @Test
     fun throwsIfNoDeviceFoundById() {
         val devicesStore = mutableMapOf(
-            DeviceUtils.DEVICE_PIXEL.deviceId to DeviceUtils.DEVICE_PIXEL,
-            DeviceUtils.DEVICE_SAMSUNG.deviceId to DeviceUtils.DEVICE_SAMSUNG
+            DEVICE_PIXEL.deviceId to DEVICE_PIXEL,
+            DEVICE_SAMSUNG.deviceId to DEVICE_SAMSUNG
         )
         val deviceDao = DevicesDao(devicesStore)
         val deviceService = DevicesService(deviceDao)
